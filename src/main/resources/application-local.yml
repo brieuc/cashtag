@@ -1,0 +1,19 @@
+spring:
+  application:
+    name: Cashtag
+
+  datasource:
+    url: jdbc:mariadb://localhost:3306/cashtagdb
+    username: root
+    password: BrieucGorin
+    driver-class-name: org.mariadb.jdbc.Driver
+
+  jpa:
+    #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
+    hibernate:
+      ddl-auto: none
+      #ddl-auto: create-drop
+    show-sql: false
+
+  liquibase:
+    change-log: classpath:db/changelog/db.changelog-master.xml

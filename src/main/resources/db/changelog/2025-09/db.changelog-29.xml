@@ -1,0 +1,169 @@
+<?xml version="1.0" encoding="UTF-8"?>  
+<databaseChangeLog
+   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!-- Create Currency table -->
+    <changeSet id="1" author="Brieuc">
+        <createTable tableName="currency">
+            <column name="code" type="VARCHAR(3)">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Tag table -->
+    <changeSet id="2" author="Brieuc">
+        <createTable tableName="tag">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="icon" type="VARCHAR(255)"/>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Period table -->
+    <changeSet id="3" author="Brieuc">
+        <createTable tableName="period">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="start_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="end_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+    <!-- Create Rate table -->
+    <changeSet id="4" author="Brieuc">
+        <createTable tableName="rate">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="value_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="rate_percent" type="DECIMAL(10,4)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="rate"
+                                 baseColumnNames="currency_code"
+                                 constraintName="fk_rate_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Create Entry table -->
+    <changeSet id="5" author="Brieuc">
+        <createTable tableName="entry">
+            <column name="id" type="BIGINT" autoIncrement="true">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="accounting_date" type="DATE">
+                <constraints nullable="false"/>
+            </column>
+            <column name="modification_date" type="DATETIME">
+                <constraints nullable="false"/>
+            </column>
+            <column name="title" type="VARCHAR(255)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="description" type="TEXT"/>
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <addForeignKeyConstraint baseTableName="entry"
+                                 baseColumnNames="currency_code"
+                                 constraintName="fk_entry_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="RESTRICT"/>
+    </changeSet>
+
+    <!-- Create Entry-Tag junction table (Many-to-Many relationship) -->
+    <changeSet id="6" author="Brieuc">
+        <createTable tableName="entry_tag">
+            <column name="entry_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+            <column name="tag_id" type="BIGINT">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
+        <!-- Composite primary key -->
+        <addPrimaryKey tableName="entry_tag"
+                       columnNames="entry_id, tag_id"
+                       constraintName="pk_entry_tag"/>
+
+        <!-- Foreign key to Entry -->
+        <addForeignKeyConstraint baseTableName="entry_tag"
+                                 baseColumnNames="entry_id"
+                                 constraintName="fk_entry_tag_entry"
+                                 referencedTableName="entry"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+
+        <!-- Foreign key to Tag -->
+        <addForeignKeyConstraint baseTableName="entry_tag"
+                                 baseColumnNames="tag_id"
+                                 constraintName="fk_entry_tag_tag"
+                                 referencedTableName="tag"
+                                 referencedColumnNames="id"
+                                 onDelete="CASCADE"/>
+    </changeSet>
+
+    <!-- Create indexes for better performance -->
+    <changeSet id="7" author="Brieuc">
+        <!-- Index on accounting_date for date range queries -->
+        <createIndex indexName="idx_entry_accounting_date" tableName="entry">
+            <column name="accounting_date"/>
+        </createIndex>
+
+        <!-- Index on currency_code for currency filtering -->
+        <createIndex indexName="idx_entry_currency" tableName="entry">
+            <column name="currency_code"/>
+        </createIndex>
+
+        <!-- Index on rate currency and date for exchange rate lookup -->
+        <createIndex indexName="idx_rate_currency_date" tableName="rate">
+            <column name="currency_code"/>
+            <column name="value_date"/>
+        </createIndex>
+
+        <!-- Unique constraint to prevent duplicate rates for same currency and date -->
+        <addUniqueConstraint tableName="rate"
+                             columnNames="currency_code, value_date"
+                             constraintName="uk_rate_currency_date"/>
+
+        <!-- Index on period dates for period lookup by date -->
+        <createIndex indexName="idx_period_dates" tableName="period">
+            <column name="start_date"/>
+            <column name="end_date"/>
+        </createIndex>
+
+        <!-- Index on tag title for search by title -->
+        <createIndex indexName="idx_tag_title" tableName="tag">
+            <column name="title"/>
+        </createIndex>
+    </changeSet>
+</databaseChangeLog>
