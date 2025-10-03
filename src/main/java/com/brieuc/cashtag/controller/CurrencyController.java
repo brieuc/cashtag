@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/currencies")
+@RequestMapping(value = "/currencies", produces = "application/json", consumes = "application/json")
 @RequiredArgsConstructor
 public class CurrencyController {
 

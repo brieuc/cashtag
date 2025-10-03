@@ -20,7 +20,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/entries")
+@RequestMapping(value = "/entries", produces = "application/json", consumes = "application/json")
 @RequiredArgsConstructor
 public class EntryController {
 

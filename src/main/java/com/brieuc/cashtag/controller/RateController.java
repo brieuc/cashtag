@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/rates")
+@RequestMapping(value = "/rates", produces = "application/json", consumes = "application/json")
 @RequiredArgsConstructor
 public class RateController {
 

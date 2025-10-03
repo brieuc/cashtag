@@ -13,7 +13,7 @@ import java.time.LocalDate;
 import java.util.List;
 
 @RestController
-@RequestMapping("/periods")
+@RequestMapping(value = "/periods", produces = "application/json", consumes = "application/json")
 @RequiredArgsConstructor
 public class PeriodController {
 
