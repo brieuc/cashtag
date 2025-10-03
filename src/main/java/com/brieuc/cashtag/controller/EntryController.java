@@ -1,6 +1,7 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.dto.EntryDto;
+import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Tag;
@@ -17,6 +18,7 @@ import java.time.LocalDate;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
@@ -74,9 +76,9 @@ public class EntryController {
         Currency currency = currencyService.findByCode(dto.getCurrencyCode())
                 .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
 
-        Set<Tag> tags = dto.getTagTitles().stream()
-                .map(title -> tagService.findByTitle(title)
-                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + title)))
+        Set<Tag> tags = dto.getTags().stream()
+                .map(tag -> tagService.findById(tag.getId())
+                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tag.getTitle())))
                 .collect(Collectors.toSet());
 
         Entry entry = Entry.builder()
@@ -98,9 +100,9 @@ public class EntryController {
                     Currency currency = currencyService.findByCode(dto.getCurrencyCode())
                             .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
 
-                    Set<Tag> tags = dto.getTagTitles().stream()
-                            .map(title -> tagService.findByTitle(title)
-                                    .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + title)))
+                    Set<Tag> tags = dto.getTags().stream()
+                            .map(tag -> tagService.findById(tag.getId())
+                                    .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tag.getTitle())))
                             .collect(Collectors.toSet());
 
                     existing.setAccountingDate(dto.getAccountingDate());
@@ -124,14 +126,23 @@ public class EntryController {
         entryService.deleteById(id);
         return ResponseEntity.noContent().build();
     }
-
+    
     private EntryDto toDto(Entry entry) {
-        Set<String> tagTitles = entry.getTags().stream()
-                .map(Tag::getTitle)
-                .collect(Collectors.toSet());
-        return new EntryDto(entry.getId(), entry.getAccountingDate(),
-                          entry.getModificationDate(), entry.getTitle(),
-                          entry.getDescription(), entry.getAmount(),
-                          entry.getCurrency().getCode(), tagTitles);
-    }
+        return EntryDto.builder()
+                .id(entry.getId()) // si vous avez besoin de l'ID
+                .accountingDate(entry.getAccountingDate())
+                .amount(entry.getAmount())
+                .modificationDate(entry.getModificationDate())
+                .currencyCode(entry.getCurrency().getCode())
+                .title(entry.getTitle())
+                .description(entry.getDescription())
+                .tags(entry.getTags().stream()
+                        .map(tag -> TagDto.builder()
+                                .id(tag.getId())
+                                .title(tag.getTitle())
+                                .description(tag.getDescription())
+                                .build())
+                        .collect(Collectors.toSet()))
+                .build();
+        }
 }

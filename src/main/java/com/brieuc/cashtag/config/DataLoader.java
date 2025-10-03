@@ -16,6 +16,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Set;
 
 @Component
@@ -53,7 +54,7 @@ public class DataLoader implements ApplicationRunner {
 
         // Create entries
         Entry entry1 = new Entry();
-        entry1.setAccountingDate(LocalDate.now().minusDays(30));
+        entry1.setAccountingDate(LocalDateTime.now().minusDays(30));
         entry1.setTitle("Salaire mensuel");
         entry1.setDescription("Salaire du mois de septembre");
         entry1.setCurrency(eur);
@@ -61,7 +62,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(entry1);
 
         Entry entry2 = new Entry();
-        entry2.setAccountingDate(LocalDate.now().minusDays(28));
+        entry2.setAccountingDate(LocalDateTime.now().minusDays(28));
         entry2.setTitle("Loyer octobre");
         entry2.setDescription("Paiement du loyer");
         entry2.setCurrency(eur);
@@ -69,7 +70,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(entry2);
 
         Entry entry3 = new Entry();
-        entry3.setAccountingDate(LocalDate.now().minusDays(15));
+        entry3.setAccountingDate(LocalDateTime.now().minusDays(15));
         entry3.setTitle("Courses Carrefour");
         entry3.setDescription("Courses hebdomadaires");
         entry3.setCurrency(eur);
@@ -77,7 +78,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(entry3);
 
         Entry entry4 = new Entry();
-        entry4.setAccountingDate(LocalDate.now().minusDays(10));
+        entry4.setAccountingDate(LocalDateTime.now().minusDays(10));
         entry4.setTitle("Essence");
         entry4.setDescription("Plein d'essence");
         entry4.setCurrency(eur);
@@ -85,7 +86,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(entry4);
 
         Entry entry5 = new Entry();
-        entry5.setAccountingDate(LocalDate.now().minusDays(5));
+        entry5.setAccountingDate(LocalDateTime.now().minusDays(5));
         entry5.setTitle("Cinéma");
         entry5.setDescription("Soirée cinéma");
         entry5.setCurrency(eur);
@@ -93,7 +94,7 @@ public class DataLoader implements ApplicationRunner {
         entryRepository.save(entry5);
 
         Entry entry6 = new Entry();
-        entry6.setAccountingDate(LocalDate.now().minusDays(2));
+        entry6.setAccountingDate(LocalDateTime.now().minusDays(2));
         entry6.setTitle("Restaurant");
         entry6.setDescription("Dîner au restaurant");
         entry6.setCurrency(eur);

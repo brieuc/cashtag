@@ -12,4 +12,8 @@
         </addColumn>
     </changeSet>
 
+    <changeSet id="modify-accounting-date-to-timestamp" author="brieuc">
+        <modifyDataType tableName="entry" columnName="accounting_date" newDataType="TIMESTAMP"/>
+    </changeSet>
+
 </databaseChangeLog>

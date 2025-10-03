@@ -22,7 +22,7 @@ public class Entry {
     private Long id;
 
     @Column(name = "accounting_date", nullable = false)
-    private LocalDate accountingDate;
+    private LocalDateTime accountingDate;
 
     @Column(name = "modification_date", nullable = false)
     private LocalDateTime modificationDate;
