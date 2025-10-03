@@ -74,13 +74,19 @@ public class EntryController {
         Currency currency = currencyService.findByCode(dto.getCurrencyCode())
                 .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
 
-        Set<Tag> tags = dto.getTagIds().stream()
-                .map(id -> tagService.findById(id)
-                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + id)))
+        Set<Tag> tags = dto.getTagTitles().stream()
+                .map(title -> tagService.findByTitle(title)
+                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + title)))
                 .collect(Collectors.toSet());
 
-        Entry entry = new Entry(null, dto.getAccountingDate(), null,
-                dto.getTitle(), dto.getDescription(), currency, tags);
+        Entry entry = Entry.builder()
+                .accountingDate(dto.getAccountingDate())
+                .title(dto.getTitle())
+                .description(dto.getDescription())
+                .amount(dto.getAmount())
+                .currency(currency)
+                .tags(tags)
+                .build();
         Entry saved = entryService.save(entry);
         return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
     }
@@ -92,14 +98,15 @@ public class EntryController {
                     Currency currency = currencyService.findByCode(dto.getCurrencyCode())
                             .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
 
-                    Set<Tag> tags = dto.getTagIds().stream()
-                            .map(tagId -> tagService.findById(tagId)
-                                    .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tagId)))
+                    Set<Tag> tags = dto.getTagTitles().stream()
+                            .map(title -> tagService.findByTitle(title)
+                                    .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + title)))
                             .collect(Collectors.toSet());
 
                     existing.setAccountingDate(dto.getAccountingDate());
                     existing.setTitle(dto.getTitle());
                     existing.setDescription(dto.getDescription());
+                    existing.setAmount(dto.getAmount());
                     existing.setCurrency(currency);
                     existing.setTags(tags);
 
@@ -119,11 +126,12 @@ public class EntryController {
     }
 
     private EntryDto toDto(Entry entry) {
-        Set<Long> tagIds = entry.getTags().stream()
-                .map(Tag::getId)
+        Set<String> tagTitles = entry.getTags().stream()
+                .map(Tag::getTitle)
                 .collect(Collectors.toSet());
         return new EntryDto(entry.getId(), entry.getAccountingDate(),
                           entry.getModificationDate(), entry.getTitle(),
-                          entry.getDescription(), entry.getCurrency().getCode(), tagIds);
+                          entry.getDescription(), entry.getAmount(),
+                          entry.getCurrency().getCode(), tagTitles);
     }
 }

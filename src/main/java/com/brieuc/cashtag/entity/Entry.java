@@ -1,10 +1,9 @@
 package com.brieuc.cashtag.entity;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -15,6 +14,7 @@ import java.util.Set;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Entry {
 
     @Id
@@ -32,6 +32,9 @@ public class Entry {
 
     @Column(columnDefinition = "TEXT")
     private String description;
+
+    @Column(nullable = false, precision = 15, scale = 2)
+    private BigDecimal amount;
 
     @ManyToOne
     @JoinColumn(name = "currency_code", nullable = false)
