@@ -1,0 +1,44 @@
+version: '3.8'
+
+services:
+  cashtag-api:
+    build: ./cashtag
+    container_name: cashtag_api
+    restart: always
+    networks:
+      - web
+    environment:
+      - SPRING_PROFILES_ACTIVE=prod
+      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/cashtagdb
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=BrieucGorin
+    depends_on:
+      - db
+      
+  cashtag-front:
+    build: ./cashvue
+    container_name: cashtag_front
+    restart: always
+    networks:
+      - web
+    depends_on:
+      - cashtag-api
+
+  db:
+    image: mariadb:10.6
+    container_name: cashtag_db
+    networks:
+      - web
+    restart: always
+    environment:
+      MARIADB_ROOT_PASSWORD: BrieucGorin
+      MARIADB_DATABASE: cashtagdb
+    volumes:
+      - cashtag-db-data:/var/lib/mysql
+
+volumes:
+  cashtag-db-data:
+
+networks:
+  web:
+    external: true
