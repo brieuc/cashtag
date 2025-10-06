@@ -15,11 +15,3 @@ spring:
 
 security:
   require-ssl: true
-
-server:
-  port: 8443
-  ssl:
-    key-store: /etc/letsencrypt/live/vps-4ac2e447.vps.ovh.net/keystore.p12
-    key-store-password: Thunder1982fr_
-    key-store-type: PKCS12
-    key-alias: tomcat
