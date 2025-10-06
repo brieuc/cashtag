@@ -11,7 +11,4 @@ spring:
     show-sql: true
 
   liquibase:
-    change-log: classpath:db/changelog/db.changelog-master.xml  
-
-security:
-  require-ssl: true
+    change-log: classpath:db/changelog/db.changelog-master.xml
