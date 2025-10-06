@@ -14,6 +14,6 @@ FROM eclipse-temurin:21-jre-alpine
 # Set the working directory in the container
 WORKDIR /app
 # Copy the built JAR file from the previous stage to the container
-COPY --from=build /app/target/cashtag-0.0.1.jar .
+COPY --from=build /app/target/cashtag-0.0.2.jar .
 # Set the command to run the application
-CMD ["java", "-jar", "-Dspring.profiles.active=production", "cashtag-0.0.1.jar"]
+CMD ["java", "-jar", "-Dspring.profiles.active=production", "cashtag-0.0.2.jar"]
