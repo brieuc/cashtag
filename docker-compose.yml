@@ -16,7 +16,7 @@ services:
       - db
       
   cashtag-front:
-    build: ./cashvue
+    build: ./../cashvue
     container_name: cashtag_front
     restart: always
     networks:
