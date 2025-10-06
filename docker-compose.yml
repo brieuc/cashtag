@@ -16,7 +16,7 @@ services:
       - db
       
   cashtag-front:
-    image: cashtag:latest
+    image: cashvue:latest
     container_name: cashtag_front
     restart: always
     networks:
