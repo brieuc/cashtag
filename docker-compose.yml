@@ -1,9 +1,9 @@
 version: '3.8'
 
 services:
-  cashtag-api:
+  backend:
     image: cashtag:latest
-    container_name: cashtag_api
+    container_name: cashtag
     restart: always
     networks:
       - web
@@ -15,9 +15,9 @@ services:
     depends_on:
       - db
       
-  cashtag-front:
+  frontend:
     image: cashvue:latest
-    container_name: cashtag_front
+    container_name: cashvue
     restart: always
     networks:
       - web
