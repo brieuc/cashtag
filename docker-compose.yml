@@ -22,7 +22,7 @@ services:
     networks:
       - web
     depends_on:
-      - cashtag-api
+      - cashtag
 
   db:
     image: mariadb:10.6
