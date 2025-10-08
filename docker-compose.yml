@@ -34,10 +34,7 @@ services:
       MARIADB_ROOT_PASSWORD: BrieucGorin
       MARIADB_DATABASE: cashtagdb
     volumes:
-      - cashtag-db-data:/var/lib/mysql
-
-volumes:
-  cashtag-db-data:
+      - /home/debian/var-lib-mysql/:/var/lib/mysql
 
 networks:
   web:
