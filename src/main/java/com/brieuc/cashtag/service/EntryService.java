@@ -1,45 +1,21 @@
 package com.brieuc.cashtag.service;
 
-import com.brieuc.cashtag.entity.Entry;
-import com.brieuc.cashtag.repository.EntryRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.List;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
-import java.util.List;
-import java.util.Optional;
+import com.brieuc.cashtag.entity.Entry;
+
+import jakarta.validation.constraints.NotNull;
 
 @Service
-@RequiredArgsConstructor
-public class EntryService {
-
-    private final EntryRepository entryRepository;
-
-    public List<Entry> findAll() {
-        return entryRepository.findAll();
-    }
-
-    public Optional<Entry> findById(Long id) {
-        return entryRepository.findById(id);
-    }
-
-    public List<Entry> findByDateRange(LocalDate startDate, LocalDate endDate) {
-        return entryRepository.findByAccountingDateBetween(startDate, endDate);
-    }
-
-    public List<Entry> findByTag(Long tagId) {
-        return entryRepository.findByTagId(tagId);
-    }
-
-    public List<Entry> findByCurrency(String currencyCode) {
-        return entryRepository.findByCurrencyCode(currencyCode);
-    }
-
-    public Entry save(Entry entry) {
-        return entryRepository.save(entry);
-    }
-
-    public void deleteById(Long id) {
-        entryRepository.deleteById(id);
-    }
+public interface EntryService {
+      Page<Entry> getEntries(@NotNull Specification<Entry> specification, @NotNull Pageable pageable);
+      Entry getById(@NotNull Long id);
+      Entry create(@NotNull Entry entry);
+      Entry update(@NotNull Entry entry);
+      void delete(@NotNull Entry entry);
 }

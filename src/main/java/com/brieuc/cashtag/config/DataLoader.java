@@ -15,7 +15,6 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -39,17 +38,36 @@ public class DataLoader implements ApplicationRunner {
         log.info("Starting data initialization...");
 
         // Create currencies
-        Currency eur = currencyRepository.save(new Currency("EUR"));
-        Currency usd = currencyRepository.save(new Currency("USD"));
-        Currency gbp = currencyRepository.save(new Currency("GBP"));
+        Currency chf = currencyRepository.save(new Currency("CHF", Boolean.TRUE));
+        Currency eur = currencyRepository.save(new Currency("EUR", Boolean.FALSE));
         log.info("Created {} currencies", 3);
 
         // Create tags
-        Tag salaryTag = tagRepository.save(new Tag(null, "Salaire", "Revenus mensuels", "💰"));
-        Tag rentTag = tagRepository.save(new Tag(null, "Loyer", "Dépenses de logement", "🏠"));
-        Tag foodTag = tagRepository.save(new Tag(null, "Alimentation", "Courses et restaurants", "🍽️"));
-        Tag transportTag = tagRepository.save(new Tag(null, "Transport", "Déplacements et carburant", "🚗"));
-        Tag leisureTag = tagRepository.save(new Tag(null, "Loisirs", "Activités et divertissements", "🎉"));
+        Tag salaryTag = tagRepository.save(Tag.builder()
+                .title("Salaire")
+                .description("Revenus mensuels")
+                .icon("💰")
+                .build());
+        Tag rentTag = tagRepository.save(Tag.builder()
+                .title("Loyer")
+                .description("Dépenses de logement")
+                .icon("🏠")
+                .build());
+        Tag foodTag = tagRepository.save(Tag.builder()
+                .title("Alimentation")
+                .description("Courses et restaurants")
+                .icon("🍽️")
+                .build());
+        Tag transportTag = tagRepository.save(Tag.builder()
+                .title("Transport")
+                .description("Déplacements et carburant")
+                .icon("🚗")
+                .build());
+        Tag leisureTag = tagRepository.save(Tag.builder()
+                .title("Loisirs")
+                .description("Activités et divertissements")
+                .icon("🎉")
+                .build());
         log.info("Created {} tags", 5);
 
         // Create entries
@@ -65,7 +83,7 @@ public class DataLoader implements ApplicationRunner {
         entry2.setAccountingDate(LocalDateTime.now().minusDays(28));
         entry2.setTitle("Loyer octobre");
         entry2.setDescription("Paiement du loyer");
-        entry2.setCurrency(eur);
+        entry2.setCurrency(chf);
         entry2.setTags(Set.of(rentTag));
         entryRepository.save(entry2);
 
@@ -104,22 +122,9 @@ public class DataLoader implements ApplicationRunner {
         log.info("Created {} entries", 6);
 
         // Create rates
-        Rate rateUsd1 = new Rate(null, usd, LocalDate.now().minusDays(30), new BigDecimal("1.0850"));
-        Rate rateUsd2 = new Rate(null, usd, LocalDate.now().minusDays(15), new BigDecimal("1.0920"));
-        Rate rateUsd3 = new Rate(null, usd, LocalDate.now(), new BigDecimal("1.0875"));
+        Rate rateEur = new Rate(null, eur, null, new BigDecimal("1.0722"));
 
-        Rate rateGbp1 = new Rate(null, gbp, LocalDate.now().minusDays(30), new BigDecimal("0.8650"));
-        Rate rateGbp2 = new Rate(null, gbp, LocalDate.now().minusDays(15), new BigDecimal("0.8590"));
-        Rate rateGbp3 = new Rate(null, gbp, LocalDate.now(), new BigDecimal("0.8625"));
-
-        rateRepository.save(rateUsd1);
-        rateRepository.save(rateUsd2);
-        rateRepository.save(rateUsd3);
-        rateRepository.save(rateGbp1);
-        rateRepository.save(rateGbp2);
-        rateRepository.save(rateGbp3);
-
-        log.info("Created {} rates", 6);
+        rateRepository.save(rateEur);
         log.info("Data initialization completed successfully!");
     }
 }

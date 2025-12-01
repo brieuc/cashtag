@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <changeSet id="add-reference-to-currency" author="brieuc">
+        <addColumn tableName="currency">
+            <column name="reference" type="BOOLEAN">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+        <changeSet id="add-oreder-to-tag" author="brieuc">
+        <addColumn tableName="tag">
+            <column name="order" type="INTEGER">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <changeSet id="rename-tag-order-column" author="brieuc">
+        <renameColumn tableName="tag"
+                    oldColumnName="order"
+                    newColumnName="sorting_order"
+                    columnDataType="INT"/>
+    </changeSet>
+
+</databaseChangeLog>

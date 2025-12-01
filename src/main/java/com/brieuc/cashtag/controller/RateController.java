@@ -1,84 +1,68 @@
 package com.brieuc.cashtag.controller;
 
+import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.RateDto;
-import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Rate;
-import com.brieuc.cashtag.service.CurrencyService;
+import com.brieuc.cashtag.mapper.PageRequestMapper;
+import com.brieuc.cashtag.mapper.RateMapper;
 import com.brieuc.cashtag.service.RateService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(value = "/rates", produces = "application/json", consumes = "application/json")
+@RequestMapping(value = "/rates", produces = "application/json")
 @RequiredArgsConstructor
 public class RateController {
 
     private final RateService rateService;
-    private final CurrencyService currencyService;
+    private final PageRequestMapper pageRequestMapper;
+    private final RateMapper rateMapper;
 
     @GetMapping
-    public ResponseEntity<List<RateDto>> getAllRates() {
-        List<RateDto> rates = rateService.findAll().stream()
-                .map(this::toDto)
-                .toList();
+    public ResponseEntity<Page<RateDto>> getAllRates(@ModelAttribute PageRequestDto pageRequestDto) {
+        Specification<Rate> specification = Specification.unrestricted();
+        Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
+                .map(rateMapper::toDto);
         return ResponseEntity.ok(rates);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<RateDto> getRateById(@PathVariable Long id) {
-        return rateService.findById(id)
-                .map(r -> ResponseEntity.ok(toDto(r)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(rateMapper.toDto(rateService.getById(id)));
     }
 
     @GetMapping("/currency/{currencyCode}")
-    public ResponseEntity<List<RateDto>> getRatesByCurrency(@PathVariable String currencyCode) {
-        List<RateDto> rates = rateService.findByCurrency(currencyCode).stream()
-                .map(this::toDto)
-                .toList();
+    public ResponseEntity<Page<RateDto>> getRatesByCurrency(@PathVariable String currencyCode, @ModelAttribute PageRequestDto pageRequestDto) {
+        // TODO: Implement specification with currency filter
+        Specification<Rate> specification = Specification.unrestricted();
+        Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
+                .map(rateMapper::toDto);
         return ResponseEntity.ok(rates);
     }
 
-    @PostMapping
-    public ResponseEntity<RateDto> createRate(@RequestBody RateDto dto) {
-        Currency currency = currencyService.findByCode(dto.getCurrencyCode())
-                .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
-
-        Rate rate = new Rate(null, currency, dto.getValueDate(), dto.getRatePercent());
-        Rate saved = rateService.save(rate);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<RateDto> createRate(@RequestBody RateDto rateDto) {
+        Rate newRate = rateService.save(rateMapper.toEntity(rateDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(rateMapper.toDto(newRate));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<RateDto> updateRate(@PathVariable Long id, @RequestBody RateDto dto) {
-        return rateService.findById(id)
-                .map(existing -> {
-                    Currency currency = currencyService.findByCode(dto.getCurrencyCode())
-                            .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
-                    existing.setCurrency(currency);
-                    existing.setValueDate(dto.getValueDate());
-                    existing.setRatePercent(dto.getRatePercent());
-                    Rate updated = rateService.save(existing);
-                    return ResponseEntity.ok(toDto(updated));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<RateDto> updateRate(@PathVariable Long id, @RequestBody RateDto rateDto) {
+        if (!id.equals(rateDto.getId())) {
+            throw new RuntimeException("no rate corresponding to this id");
+        }
+        Rate updatedRate = rateService.save(rateMapper.toEntity(rateDto));
+        return ResponseEntity.status(HttpStatus.OK).body(rateMapper.toDto(updatedRate));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteRate(@PathVariable Long id) {
-        if (rateService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        rateService.deleteById(id);
+        Rate rate = rateService.getById(id);
+        rateService.delete(rate);
         return ResponseEntity.noContent().build();
-    }
-
-    private RateDto toDto(Rate rate) {
-        return new RateDto(rate.getId(), rate.getCurrency().getCode(),
-                          rate.getValueDate(), rate.getRatePercent());
     }
 }

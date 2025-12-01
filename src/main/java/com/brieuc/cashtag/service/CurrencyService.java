@@ -1,32 +1,18 @@
 package com.brieuc.cashtag.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import com.brieuc.cashtag.entity.Currency;
-import com.brieuc.cashtag.repository.CurrencyRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.validation.constraints.NotNull;
 
-@Service
-@RequiredArgsConstructor
-public class CurrencyService {
-
-    private final CurrencyRepository currencyRepository;
-
-    public List<Currency> findAll() {
-        return currencyRepository.findAll();
-    }
-
-    public Optional<Currency> findByCode(String code) {
-        return currencyRepository.findById(code);
-    }
-
-    public Currency save(Currency currency) {
-        return currencyRepository.save(currency);
-    }
-
-    public void deleteByCode(String code) {
-        currencyRepository.deleteById(code);
-    }
+public interface CurrencyService {
+      Page<Currency> getCurrencies(@NotNull Specification<Currency> specification, @NotNull Pageable pageable);
+      Currency getCurrencyByCode(@NotNull String code);
+      Currency create(@NotNull Currency currency);
+      Currency update(@NotNull Currency currency);
+      Currency getById(@NotNull String code);
+      void deleteById(@NotNull String code);
 }

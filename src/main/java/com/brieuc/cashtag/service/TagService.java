@@ -1,36 +1,18 @@
 package com.brieuc.cashtag.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
+
 import com.brieuc.cashtag.entity.Tag;
-import com.brieuc.cashtag.repository.TagRepository;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
+import jakarta.validation.constraints.NotNull;
 
-@Service
-@RequiredArgsConstructor
-public class TagService {
-
-    private final TagRepository tagRepository;
-
-    public List<Tag> findAll() {
-        return tagRepository.findAll();
-    }
-
-    public Optional<Tag> findById(Long id) {
-        return tagRepository.findById(id);
-    }
-
-    public Optional<Tag> findByTitle(String title) {
-        return tagRepository.findByTitle(title);
-    }
-
-    public Tag save(Tag tag) {
-        return tagRepository.save(tag);
-    }
-
-    public void deleteById(Long id) {
-        tagRepository.deleteById(id);
-    }
+public interface TagService {
+      Page<Tag> getTags(@NotNull Specification<Tag> specification, @NotNull Pageable pageable);
+      Tag getById(@NotNull Long id);
+      Tag create(@NotNull Tag tag);
+      Tag update(@NotNull Tag tag);
+      void deleteById(@NotNull Long id);
+      
 }

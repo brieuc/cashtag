@@ -1,50 +1,60 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.dto.CurrencyDto;
+import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.entity.Currency;
-import com.brieuc.cashtag.service.CurrencyService;
+import com.brieuc.cashtag.mapper.CurrencyMapper;
+import com.brieuc.cashtag.mapper.PageRequestMapper;
+import com.brieuc.cashtag.service.CurrencyServiceImpl;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping(value = "/currencies", produces = "application/json", consumes = "application/json")
+@RequestMapping(value = "/currencies", produces = "application/json")
 @RequiredArgsConstructor
 public class CurrencyController {
 
-    private final CurrencyService currencyService;
+    private final CurrencyServiceImpl currencyService;
+    private final CurrencyMapper currencyMapper;
+    private final PageRequestMapper pageRequestMapper;
 
     @GetMapping
-    public ResponseEntity<List<CurrencyDto>> getAllCurrencies() {
-        List<CurrencyDto> currencies = currencyService.findAll().stream()
-                .map(c -> new CurrencyDto(c.getCode()))
-                .toList();
+    public ResponseEntity<Page<CurrencyDto>> getAllCurrencies(@ModelAttribute PageRequestDto pageRequestDto) {
+
+        Specification<Currency> specification = Specification.unrestricted();
+        Page<CurrencyDto> currencies = currencyService.getCurrencies(specification, pageRequestMapper.toPageable(pageRequestDto))
+                .map(currencyMapper::toDto);
+
         return ResponseEntity.ok(currencies);
     }
 
     @GetMapping("/{code}")
     public ResponseEntity<CurrencyDto> getCurrencyByCode(@PathVariable String code) {
-        return currencyService.findByCode(code)
-                .map(c -> ResponseEntity.ok(new CurrencyDto(c.getCode())))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(currencyMapper.toDto(currencyService.getById(code)));
     }
 
-    @PostMapping
-    public ResponseEntity<CurrencyDto> createCurrency(@RequestBody CurrencyDto dto) {
-        Currency currency = new Currency(dto.getCode());
-        Currency saved = currencyService.save(currency);
-        return ResponseEntity.status(HttpStatus.CREATED).body(new CurrencyDto(saved.getCode()));
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<CurrencyDto> createCurrency(@RequestBody CurrencyDto currencyDto) {
+        Currency saved = currencyService.create(currencyMapper.toEntity(currencyDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(currencyMapper.toDto(saved));
+    }
+
+    @PutMapping(value = "/{code}", consumes = "application/json")
+    public ResponseEntity<CurrencyDto> updateCurrency(@PathVariable String code, @RequestBody CurrencyDto currencyDto) {
+        if (!currencyDto.getCode().equals(code))
+            throw new RuntimeException("no currency corresponding to this code");
+        Currency currency = currencyService.update(currencyMapper.toEntity(currencyDto));
+        return ResponseEntity.ok(currencyMapper.toDto(currency));
     }
 
     @DeleteMapping("/{code}")
     public ResponseEntity<Void> deleteCurrency(@PathVariable String code) {
-        if (currencyService.findByCode(code).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        currencyService.deleteByCode(code);
+        currencyService.deleteById(code);
         return ResponseEntity.noContent().build();
     }
 }

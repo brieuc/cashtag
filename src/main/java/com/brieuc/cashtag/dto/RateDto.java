@@ -1,6 +1,7 @@
 package com.brieuc.cashtag.dto;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -10,9 +11,10 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class RateDto {
     private Long id;
     private String currencyCode;
     private LocalDate valueDate;
-    private BigDecimal ratePercent;
+    private BigDecimal rate;
 }
