@@ -1,14 +1,23 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.dto.EntryDto;
+import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Tag;
+import com.brieuc.cashtag.mapper.EntryMapper;
+import com.brieuc.cashtag.mapper.PageRequestMapper;
+import com.brieuc.cashtag.mapper.TagMapper;
 import com.brieuc.cashtag.service.CurrencyService;
 import com.brieuc.cashtag.service.EntryService;
+import com.brieuc.cashtag.service.EntryServiceImpl;
 import com.brieuc.cashtag.service.TagService;
+import com.brieuc.cashtag.service.TagServiceImpl;
 import lombok.RequiredArgsConstructor;
+
+import org.springframework.data.domain.Page;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,29 +31,35 @@ import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping(value = "/entries", produces = "application/json", consumes = "application/json")
+@RequestMapping(value = "/entries", produces = "application/json")
 @RequiredArgsConstructor
 public class EntryController {
 
     private final EntryService entryService;
     private final CurrencyService currencyService;
-    private final TagService tagService;
+    private final PageRequestMapper pageRequestMapper;
+    private final EntryMapper entryMapper;
+    private final TagMapper tagMapper;
 
     @GetMapping
-    public ResponseEntity<List<EntryDto>> getAllEntries() {
-        List<EntryDto> entries = entryService.findAll().stream()
-                .map(this::toDto)
-                .toList();
+    public ResponseEntity<Page<EntryDto>> getAllEntries(@ModelAttribute PageRequestDto pageRequestDto) {
+        Specification<Entry> specfication = Specification.unrestricted();
+        Page<EntryDto> entries = entryService.getEntries(specfication, pageRequestMapper.toPageable(pageRequestDto))
+                .map(entryMapper::tDto);
         return ResponseEntity.ok(entries);
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<EntryDto> getEntryById(@PathVariable Long id) {
+        return ResponseEntity.ok(entryMapper.tDto(entryService.getById(id)));
+
+        /*
         return entryService.findById(id)
                 .map(e -> ResponseEntity.ok(toDto(e)))
                 .orElse(ResponseEntity.notFound().build());
+        */
     }
-
+/*
     @GetMapping("/by-date-range")
     public ResponseEntity<List<EntryDto>> getEntriesByDateRange(
             @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
@@ -65,84 +80,34 @@ public class EntryController {
 
     @GetMapping("/by-currency/{currencyCode}")
     public ResponseEntity<List<EntryDto>> getEntriesByCurrency(@PathVariable String currencyCode) {
-        List<EntryDto> entries = entryService.findByCurrency(currencyCode).stream()
+        List<EntryDto> entries = entryService.getByCurrency(currencyCode).stream()
                 .map(this::toDto)
                 .toList();
         return ResponseEntity.ok(entries);
     }
+         */
 
-    @PostMapping
-    public ResponseEntity<EntryDto> createEntry(@RequestBody EntryDto dto) {
-        Currency currency = currencyService.findByCode(dto.getCurrencyCode())
-                .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
-
-        Set<Tag> tags = dto.getTags().stream()
-                .map(tag -> tagService.findById(tag.getId())
-                        .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tag.getTitle())))
-                .collect(Collectors.toSet());
-
-        Entry entry = Entry.builder()
-                .accountingDate(dto.getAccountingDate())
-                .title(dto.getTitle())
-                .description(dto.getDescription())
-                .amount(dto.getAmount())
-                .currency(currency)
-                .tags(tags)
-                .build();
-        Entry saved = entryService.save(entry);
-        return ResponseEntity.status(HttpStatus.CREATED).body(toDto(saved));
+    @PostMapping(consumes = "application/json")
+    public ResponseEntity<EntryDto> createEntry(@RequestBody EntryDto entryDto) {
+        Entry newEntry = entryService.create(entryMapper.toEntity(entryDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(entryMapper.tDto(newEntry));
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<EntryDto> updateEntry(@PathVariable Long id, @RequestBody EntryDto dto) {
-        return entryService.findById(id)
-                .map(existing -> {
-                    Currency currency = currencyService.findByCode(dto.getCurrencyCode())
-                            .orElseThrow(() -> new IllegalArgumentException("Currency not found"));
-
-                    Set<Tag> tags = dto.getTags().stream()
-                            .map(tag -> tagService.findById(tag.getId())
-                                    .orElseThrow(() -> new IllegalArgumentException("Tag not found: " + tag.getTitle())))
-                            .collect(Collectors.toSet());
-
-                    existing.setAccountingDate(dto.getAccountingDate());
-                    existing.setTitle(dto.getTitle());
-                    existing.setDescription(dto.getDescription());
-                    existing.setAmount(dto.getAmount());
-                    existing.setCurrency(currency);
-                    existing.setTags(tags);
-
-                    Entry updated = entryService.save(existing);
-                    return ResponseEntity.ok(toDto(updated));
-                })
-                .orElse(ResponseEntity.notFound().build());
+    @PutMapping(value = "/{id}", consumes = "application/json")
+    public ResponseEntity<EntryDto> updateEntry(@PathVariable Long id, @RequestBody EntryDto entryDto) {
+        
+        if(!id.equals(entryDto.getId()))
+                throw new RuntimeException("no tag corresponding to this id");
+         
+        Entry updatedEntry = entryService.update(entryMapper.toEntity(entryDto));
+        return ResponseEntity.status(HttpStatus.OK).body(entryMapper.tDto(updatedEntry));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteEntry(@PathVariable Long id) {
-        if (entryService.findById(id).isEmpty()) {
-            return ResponseEntity.notFound().build();
-        }
-        entryService.deleteById(id);
+        Entry entry = entryService.getById(id);
+        entryService.delete(entry);
         return ResponseEntity.noContent().build();
     }
-    
-    private EntryDto toDto(Entry entry) {
-        return EntryDto.builder()
-                .id(entry.getId()) // si vous avez besoin de l'ID
-                .accountingDate(entry.getAccountingDate())
-                .amount(entry.getAmount())
-                .modificationDate(entry.getModificationDate())
-                .currencyCode(entry.getCurrency().getCode())
-                .title(entry.getTitle())
-                .description(entry.getDescription())
-                .tags(entry.getTags().stream()
-                        .map(tag -> TagDto.builder()
-                                .id(tag.getId())
-                                .title(tag.getTitle())
-                                .description(tag.getDescription())
-                                .build())
-                        .collect(Collectors.toSet()))
-                .build();
-        }
+
 }

@@ -2,9 +2,11 @@ package com.brieuc.cashtag.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+@Builder
 @Entity
 @Table(name = "tag")
 @Data
@@ -23,4 +25,6 @@ public class Tag {
     private String description;
 
     private String icon;
+    @Column(name = "sorting_order")
+    private Integer sortingOrder;
 }

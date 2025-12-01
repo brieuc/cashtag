@@ -18,6 +18,7 @@ public class EntryDto {
     private Long id;
     private LocalDateTime accountingDate;
     private LocalDateTime modificationDate;
+    // private LocalDateTime modificationDate; internally managed
     private String title;
     private String description;
     private BigDecimal amount;

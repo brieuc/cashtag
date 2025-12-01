@@ -14,4 +14,5 @@ public class TagDto {
     private String title;
     private String description;
     private String icon;
+    private Integer sortingOrder;
 }

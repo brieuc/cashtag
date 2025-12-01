@@ -2,6 +2,7 @@ package com.brieuc.cashtag.entity;
 
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -13,6 +14,7 @@ import java.time.LocalDate;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class Rate {
 
     @Id
@@ -26,6 +28,7 @@ public class Rate {
     @Column(name = "value_date", nullable = false)
     private LocalDate valueDate;
 
-    @Column(nullable = false, precision = 10, scale = 4)
-    private BigDecimal ratePercent;
+    // Always refering to CHF even if not mentionned. For CHF 1, how many CUR ? i.e. 1 CHF = 1.0722 EUR
+    @Column(name = "rate", nullable = false, precision = 6, scale = 4)
+    private BigDecimal rate;
 }
