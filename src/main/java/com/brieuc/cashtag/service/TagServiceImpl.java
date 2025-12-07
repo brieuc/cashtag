@@ -40,9 +40,13 @@ public class TagServiceImpl implements TagService {
     }
 
     @Override
-    public Tag update(@NotNull Tag tag) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'update'");
+    public Tag update(@NotNull Tag detachedTag) {
+        Tag tag = getById(detachedTag.getId());
+        tag.setTitle(detachedTag.getTitle());
+        tag.setDescription(detachedTag.getDescription());
+        tag.setIcon(detachedTag.getIcon());
+        tag.setSortingOrder(detachedTag.getSortingOrder());
+        return tagRepository.save(tag);
     }
 
 

@@ -1,5 +1,6 @@
 package com.brieuc.cashtag.controller;
 
+import com.brieuc.cashtag.dto.EntrySpecificationDto;
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.PeriodDto;
 import com.brieuc.cashtag.entity.Period;

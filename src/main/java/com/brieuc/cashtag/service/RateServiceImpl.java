@@ -2,7 +2,6 @@ package com.brieuc.cashtag.service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -46,6 +45,21 @@ public class RateServiceImpl implements RateService {
 
     @Override
     public Rate save(@NotNull Rate rate) {
+        if (rate.getCurrency().getCode().equals("DYN")) {
+            throw new RuntimeException("No rate for dynamic currency");
+        }
+        return rateRepository.save(rate);
+    }
+
+    @Override
+    public Rate update(@NotNull Rate detachedRate) {
+        if (detachedRate.getCurrency().getCode().equals("DYN")) {
+            throw new RuntimeException("No rate for dynamic currency");
+        }
+        Rate rate = getById(detachedRate.getId());
+        rate.setCurrency(detachedRate.getCurrency());
+        rate.setValueDate(detachedRate.getValueDate());
+        rate.setRate(detachedRate.getRate());
         return rateRepository.save(rate);
     }
 

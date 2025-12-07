@@ -1,12 +1,14 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.dto.EntryDto;
+import com.brieuc.cashtag.dto.EntrySpecificationDto;
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.mapper.EntryMapper;
+import com.brieuc.cashtag.mapper.EntrySpecificationMapper;
 import com.brieuc.cashtag.mapper.PageRequestMapper;
 import com.brieuc.cashtag.mapper.TagMapper;
 import com.brieuc.cashtag.service.CurrencyService;
@@ -36,15 +38,15 @@ import java.util.stream.Collectors;
 public class EntryController {
 
     private final EntryService entryService;
-    private final CurrencyService currencyService;
     private final PageRequestMapper pageRequestMapper;
     private final EntryMapper entryMapper;
-    private final TagMapper tagMapper;
+    private final EntrySpecificationMapper entrySpecificationMapper;
 
     @GetMapping
-    public ResponseEntity<Page<EntryDto>> getAllEntries(@ModelAttribute PageRequestDto pageRequestDto) {
-        Specification<Entry> specfication = Specification.unrestricted();
-        Page<EntryDto> entries = entryService.getEntries(specfication, pageRequestMapper.toPageable(pageRequestDto))
+    public ResponseEntity<Page<EntryDto>> getAllEntries(@ModelAttribute EntrySpecificationDto entrySpecificationDto,
+                                                        @ModelAttribute PageRequestDto pageRequestDto) {
+        Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
+        Page<EntryDto> entries = entryService.getEntries(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(entryMapper::tDto);
         return ResponseEntity.ok(entries);
     }

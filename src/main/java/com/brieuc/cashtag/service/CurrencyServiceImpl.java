@@ -31,6 +31,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Currency create(@NotNull Currency currency) {
+        // The refernece is supposed to be only for DYN currency
+        currency.setReference(false);
         return currencyRepository.save(currency);
     }
 
@@ -42,10 +44,5 @@ public class CurrencyServiceImpl implements CurrencyService {
     @Override
     public Currency getCurrencyByCode(@NotNull String code) {
         return currencyRepository.findById(code).orElseThrow(() -> new EntityNotFoundException("no currency found with code " + code));
-    }
-
-    @Override
-    public Currency update(@NotNull Currency currency) {
-        return currencyRepository.save(currency);
     }
 }

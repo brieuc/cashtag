@@ -43,12 +43,11 @@ public class PeriodServiceImpl implements PeriodService {
     }
 
     @Override
-    public Period getPeriodById(@NotNull Long id) {
-        return periodRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("no period found with id " + id));
-    }
-
-    @Override
-    public Period update(@NotNull Period period) {
+    public Period update(@NotNull Period detachedPeriod) {
+        Period period = getById(detachedPeriod.getId());
+        period.setTitle(detachedPeriod.getTitle());
+        period.setStartDate(detachedPeriod.getStartDate());
+        period.setEndDate(detachedPeriod.getEndDate());
         return periodRepository.save(period);
     }
 

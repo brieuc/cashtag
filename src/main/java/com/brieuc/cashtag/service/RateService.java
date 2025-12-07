@@ -17,5 +17,6 @@ public interface RateService {
     List<Rate> getRatesByCurrency(@NotNull String currencyCode);
     Rate getRateByCurrencyAndDate(@NotNull String currencyCode, @NotNull LocalDate valueDate);
     Rate save(@NotNull Rate rate);
+    Rate update(@NotNull Rate rate);
     void delete(@NotNull Rate rate);
 }

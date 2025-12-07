@@ -12,6 +12,7 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
+import org.springframework.boot.info.BuildProperties;
 import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
@@ -22,14 +23,26 @@ import java.util.Set;
 @RequiredArgsConstructor
 @Slf4j
 public class DataLoader implements ApplicationRunner {
+        public String getVersion() {
+                return buildProperties.getVersion();
+        }
 
     private final CurrencyRepository currencyRepository;
     private final TagRepository tagRepository;
     private final EntryRepository entryRepository;
     private final RateRepository rateRepository;
+    private final BuildProperties buildProperties;
 
     @Override
     public void run(ApplicationArguments args) {
+/*
+                Currency refCurrency = Currency.builder()
+                                .code("DYN")
+                                .reference(true)
+                                .build();
+                currencyRepository.save(refCurrency);
+         */
+                 
         if (currencyRepository.count() > 0) {
             log.info("Data already exists, skipping initialization");
             return;
