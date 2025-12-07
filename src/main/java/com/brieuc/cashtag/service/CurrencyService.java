@@ -12,7 +12,7 @@ public interface CurrencyService {
       Page<Currency> getCurrencies(@NotNull Specification<Currency> specification, @NotNull Pageable pageable);
       Currency getCurrencyByCode(@NotNull String code);
       Currency create(@NotNull Currency currency);
-      Currency update(@NotNull Currency currency);
+      // No update for currency, only add new currency
       Currency getById(@NotNull String code);
       void deleteById(@NotNull String code);
 }

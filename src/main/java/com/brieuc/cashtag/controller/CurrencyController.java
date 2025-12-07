@@ -44,6 +44,7 @@ public class CurrencyController {
         return ResponseEntity.status(HttpStatus.CREATED).body(currencyMapper.toDto(saved));
     }
 
+    /*
     @PutMapping(value = "/{code}", consumes = "application/json")
     public ResponseEntity<CurrencyDto> updateCurrency(@PathVariable String code, @RequestBody CurrencyDto currencyDto) {
         if (!currencyDto.getCode().equals(code))
@@ -51,6 +52,7 @@ public class CurrencyController {
         Currency currency = currencyService.update(currencyMapper.toEntity(currencyDto));
         return ResponseEntity.ok(currencyMapper.toDto(currency));
     }
+    */
 
     @DeleteMapping("/{code}")
     public ResponseEntity<Void> deleteCurrency(@PathVariable String code) {

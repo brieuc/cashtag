@@ -12,7 +12,6 @@ public class CurrencyMapperImpl implements CurrencyMapper {
       public Currency toEntity(CurrencyDto currencyDto) {
             Currency currency = Currency.builder()
                   .code(currencyDto.getCode())
-                  .reference(currencyDto.isReference())
                   .build();
             return currency;
       }
@@ -21,7 +20,6 @@ public class CurrencyMapperImpl implements CurrencyMapper {
       public CurrencyDto toDto(Currency currency) {
             CurrencyDto currencyDto = CurrencyDto.builder()
                   .code(currency.getCode())
-                  .isReference(currency.getReference() != null ? currency.getReference() : false)
                   .build();
             return currencyDto;
       }
