@@ -15,4 +15,5 @@ public interface CurrencyService {
       // No update for currency, only add new currency
       Currency getById(@NotNull String code);
       void deleteById(@NotNull String code);
+      Currency getReferenceCurrency();
 }

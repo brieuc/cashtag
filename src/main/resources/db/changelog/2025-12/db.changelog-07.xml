@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+
+    <changeSet id="4" author="Brieuc">
+
+        <!-- Rename currency_code to source_currency_code -->
+        <renameColumn tableName="rate"
+                      oldColumnName="currency_code"
+                      newColumnName="source_currency_code"
+                      columnDataType="VARCHAR(3)"/>
+
+        <!-- Add target_currency_code column with CHF as default for existing data -->
+        <addColumn tableName="rate">
+            <column name="target_currency_code" type="VARCHAR(3)" defaultValue="CHF">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+
+        <!-- Add foreign key constraints -->
+        <addForeignKeyConstraint baseTableName="rate"
+                                 baseColumnNames="source_currency_code"
+                                 constraintName="fk_rate_source_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="CASCADE"/>
+
+        <addForeignKeyConstraint baseTableName="rate"
+                                 baseColumnNames="target_currency_code"
+                                 constraintName="fk_rate_target_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="CASCADE"/>
+
+        <!-- Create new index for exchange rate lookup -->
+        <createIndex indexName="idx_rate_currencies_date" tableName="rate">
+            <column name="source_currency_code"/>
+            <column name="target_currency_code"/>
+            <column name="value_date"/>
+        </createIndex>
+
+        <!-- Add unique constraint to prevent duplicate rates for same currency pair and date -->
+        <addUniqueConstraint tableName="rate"
+                             columnNames="source_currency_code, target_currency_code, value_date"
+                             constraintName="uk_rate_currencies_date"/>
+    </changeSet>
+</databaseChangeLog>

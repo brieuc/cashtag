@@ -34,30 +34,37 @@ public class RateServiceImpl implements RateService {
     }
 
     @Override
-    public List<Rate> getRatesByCurrency(@NotNull String currencyCode) {
-        return rateRepository.findByCurrencyCode(currencyCode);
+    public List<Rate> getRatesBySourceCurrency(@NotNull String sourceCurrencyCode) {
+        return rateRepository.findBySourceCurrencyCode(sourceCurrencyCode);
     }
 
     @Override
-    public Rate getRateByCurrencyAndDate(@NotNull String currencyCode, @NotNull LocalDate valueDate) {
-        return rateRepository.findByCurrencyCodeAndValueDate(currencyCode, valueDate).orElseThrow(() -> new EntityNotFoundException("not found for currency code " + currencyCode + " and value date " + valueDate));
+    public List<Rate> getRatesByTargetCurrency(@NotNull String targetCurrencyCode) {
+        return rateRepository.findByTargetCurrencyCode(targetCurrencyCode);
+    }
+
+    @Override
+    public Rate getRateByCurrenciesAndDate(@NotNull String sourceCurrencyCode, @NotNull String targetCurrencyCode, @NotNull LocalDate valueDate) {
+        return rateRepository.findClosestRateBefore(sourceCurrencyCode, targetCurrencyCode, valueDate)
+            .orElseThrow(() -> new EntityNotFoundException("not found for source currency " + sourceCurrencyCode + ", target currency " + targetCurrencyCode + " on " + valueDate));
     }
 
     @Override
     public Rate save(@NotNull Rate rate) {
-        if (rate.getCurrency().getCode().equals("DYN")) {
-            throw new RuntimeException("No rate for dynamic currency");
+        if (rate.getSourceCurrency().getCode().equals("DYN") || rate.getTargetCurrency().getCode().equals("DYN")) {
+            throw new RuntimeException("Not possible to add rate for dynamic currency");
         }
         return rateRepository.save(rate);
     }
 
     @Override
     public Rate update(@NotNull Rate detachedRate) {
-        if (detachedRate.getCurrency().getCode().equals("DYN")) {
-            throw new RuntimeException("No rate for dynamic currency");
+        if (detachedRate.getSourceCurrency().getCode().equals("DYN") || detachedRate.getTargetCurrency().getCode().equals("DYN")) {
+            throw new RuntimeException("Not possible to add rate for dynamic currency");
         }
         Rate rate = getById(detachedRate.getId());
-        rate.setCurrency(detachedRate.getCurrency());
+        rate.setSourceCurrency(detachedRate.getSourceCurrency());
+        rate.setTargetCurrency(detachedRate.getTargetCurrency());
         rate.setValueDate(detachedRate.getValueDate());
         rate.setRate(detachedRate.getRate());
         return rateRepository.save(rate);

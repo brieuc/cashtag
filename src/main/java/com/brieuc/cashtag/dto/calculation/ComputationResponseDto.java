@@ -1,14 +1,15 @@
 package com.brieuc.cashtag.dto.calculation;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Map;
 
 
 public record ComputationResponseDto(
-      LocalDateTime startDate,
-      LocalDateTime endDate,
+      LocalDate startDate,
+      LocalDate endDate,
       BigDecimal totalAmount,
+      String targetCurrencyCode,
       Long numberOfEntries,
       Map<String, ComputationCurrencyAmountDto> computationByCurrency) {
 
