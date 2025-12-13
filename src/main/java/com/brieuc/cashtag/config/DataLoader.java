@@ -135,7 +135,7 @@ public class DataLoader implements ApplicationRunner {
         log.info("Created {} entries", 6);
 
         // Create rates
-        Rate rateEur = new Rate(null, eur, null, new BigDecimal("1.0722"));
+        Rate rateEur = new Rate(null, eur, null, null, new BigDecimal("1.0722"));
 
         rateRepository.save(rateEur);
         log.info("Data initialization completed successfully!");

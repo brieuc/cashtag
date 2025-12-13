@@ -12,4 +12,6 @@ import org.springframework.stereotype.Repository;
 public interface CurrencyRepository extends JpaRepository<Currency, String>, JpaSpecificationExecutor<Currency> {
 
       Optional<Currency> findByCode(String code);
+      Optional<Currency> findByReferenceTrue();
+
 }

@@ -14,7 +14,9 @@ import java.time.LocalDate;
 @Builder
 public class RateDto {
     private Long id;
-    private String currencyCode;
+    private String sourceCurrencyCode;
+    // Target currency is the reference currency
+    private String targetCurrencyCode;
     private LocalDate valueDate;
     private BigDecimal rate;
 }

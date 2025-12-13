@@ -14,8 +14,9 @@ import java.util.List;
 public interface RateService {
     Page<Rate> getRates(@NotNull Specification<Rate> specification, @NotNull Pageable pageable);
     Rate getById(@NotNull Long id);
-    List<Rate> getRatesByCurrency(@NotNull String currencyCode);
-    Rate getRateByCurrencyAndDate(@NotNull String currencyCode, @NotNull LocalDate valueDate);
+    List<Rate> getRatesBySourceCurrency(@NotNull String sourceCurrencyCode);
+    List<Rate> getRatesByTargetCurrency(@NotNull String targetCurrencyCode);
+    Rate getRateByCurrenciesAndDate(@NotNull String sourceCurrencyCode, @NotNull String targetCurrencyCode, @NotNull LocalDate valueDate);
     Rate save(@NotNull Rate rate);
     Rate update(@NotNull Rate rate);
     void delete(@NotNull Rate rate);

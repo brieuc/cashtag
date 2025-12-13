@@ -22,13 +22,18 @@ public class Rate {
     private Long id;
 
     @ManyToOne
-    @JoinColumn(name = "currency_code", nullable = false)
-    private Currency currency;
+    @JoinColumn(name = "source_currency_code", nullable = false)
+    private Currency sourceCurrency;
+
+    // Target currency is the reference currency. For CHF 1, how many CUR ? i.e. 1 CHF = 1.0722 EUR
+    @ManyToOne
+    @JoinColumn(name = "target_currency_code", nullable = false)
+    private Currency targetCurrency;
 
     @Column(name = "value_date", nullable = false)
     private LocalDate valueDate;
 
-    // Always refering to CHF even if not mentionned. For CHF 1, how many CUR ? i.e. 1 CHF = 1.0722 EUR
+    // For CHF 1, how many CUR ? i.e. 1 CHF = 1.0722 EUR
     @Column(name = "rate", nullable = false, precision = 6, scale = 4)
     private BigDecimal rate;
 }

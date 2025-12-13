@@ -32,6 +32,7 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
       */
 
       public Specification<Entry> hasDateBetween(LocalDateTime start, LocalDateTime end) {
+            // TODO: At the moment, it's mandatory to use periods of time
             return (root, query, cb) -> cb.and(
                         cb.greaterThanOrEqualTo(root.get("accountingDate"), start),
                         cb.lessThan(root.get("accountingDate"), end)  // < au lieu de <=

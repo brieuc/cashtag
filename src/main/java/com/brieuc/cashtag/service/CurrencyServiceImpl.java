@@ -25,6 +25,11 @@ public class CurrencyServiceImpl implements CurrencyService {
     }
 
     @Override
+    public Currency getReferenceCurrency() {
+        return currencyRepository.findByReferenceTrue().orElseThrow(() -> new EntityNotFoundException("No reference currency code was found"));
+    }
+
+    @Override
     public Currency getById(@NotNull String code) {
         return currencyRepository.findById(code).orElseThrow(() -> new EntityNotFoundException("No currency code " + code + " was found"));
     }

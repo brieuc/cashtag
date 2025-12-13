@@ -18,7 +18,8 @@ public class RateMapperImpl implements RateMapper {
     public Rate toEntity(RateDto rateDto) {
         Rate rate = Rate.builder()
             .id(rateDto.getId())
-            .currency(currencyService.getCurrencyByCode(rateDto.getCurrencyCode()))
+            .sourceCurrency(currencyService.getCurrencyByCode(rateDto.getSourceCurrencyCode()))
+            .targetCurrency(currencyService.getCurrencyByCode(rateDto.getTargetCurrencyCode()))
             .valueDate(rateDto.getValueDate())
             .rate(rateDto.getRate())
             .build();
@@ -29,7 +30,8 @@ public class RateMapperImpl implements RateMapper {
     public RateDto toDto(Rate rate) {
         RateDto rateDto = RateDto.builder()
             .id(rate.getId())
-            .currencyCode(rate.getCurrency().getCode())
+            .sourceCurrencyCode(rate.getSourceCurrency().getCode())
+            .targetCurrencyCode(rate.getTargetCurrency().getCode())
             .valueDate(rate.getValueDate())
             .rate(rate.getRate())
             .build();
