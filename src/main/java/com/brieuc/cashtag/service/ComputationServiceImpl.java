@@ -87,7 +87,7 @@ public class ComputationServiceImpl implements ComputationService {
             if (sourceCurrencyCode.equals(targetCurrencyCode)) // 1)
                   return amount;
 
-            double rateValue = 0.0;
+            BigDecimal rateValue;
             Currency referenceCurrency = currencyService.getReferenceCurrency();
             if (!targetCurrencyCode.equals(referenceCurrency.getCode())) { // and the entry currency is not the same as the reference (see above).
                   // This exception means we're in a case we're unable to convert the entry amount because the target currency is either
@@ -98,13 +98,13 @@ public class ComputationServiceImpl implements ComputationService {
                         throw new EntityNotFoundException("the target currency doesn't match the reference currency or the tag currency");
                   
                   Rate rate = rateService.getRateByCurrenciesAndDate(targetCurrencyCode, sourceCurrencyCode,entry.getAccountingDate().toLocalDate()); // 2)     
-                  rateValue = 1.00 / rate.getRate().doubleValue();
+                  rateValue = BigDecimal.valueOf(1.00).divide(rate.getRate(), 2, RoundingMode.HALF_UP);
             }
             else {
                   Rate rate = rateService.getRateByCurrenciesAndDate(sourceCurrencyCode, targetCurrencyCode, entry.getAccountingDate().toLocalDate()); // 2)
-                  rateValue = rate.getRate().doubleValue();
+                  rateValue = rate.getRate();
             }
-            return amount.divide(BigDecimal.valueOf(rateValue), 2, RoundingMode.HALF_UP);
+            return amount.divide(rateValue, 2, RoundingMode.HALF_UP);
       }
 
       private Map<String, ComputationCurrencyAmountDto> computeEntriesByCurrency(List<Entry> entries) {
@@ -120,6 +120,4 @@ public class ComputationServiceImpl implements ComputationService {
             }
             return null;
       }
-
- 
 }
