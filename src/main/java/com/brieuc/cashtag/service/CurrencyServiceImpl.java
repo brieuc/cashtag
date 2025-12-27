@@ -36,7 +36,7 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public Currency create(@NotNull Currency currency) {
-        // The refernece is supposed to be only for DYN currency
+        // The reference is supposed to be only for DYN currency
         currency.setReference(false);
         return currencyRepository.save(currency);
     }
