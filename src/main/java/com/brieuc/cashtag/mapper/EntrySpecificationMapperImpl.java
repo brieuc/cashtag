@@ -5,6 +5,7 @@ import java.time.LocalDateTime;
 import java.util.Arrays;
 import java.util.Objects;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
@@ -20,8 +21,8 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
 
       @Override
       public Specification<Entry> toEntity(EntrySpecificationDto entrySpecificationDto) {
-            return hasDateBetween(entrySpecificationDto.getStartDate().atStartOfDay(),
-                                    entrySpecificationDto.getEndDate().plusDays(1).atStartOfDay())
+            return hasDateBetween(entrySpecificationDto.getStartDate(),
+                                    entrySpecificationDto.getEndDate())
                         .and(hasAnyTag(entrySpecificationDto.getTagIds()));
       }
 
@@ -31,12 +32,21 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
       }
       */
 
-      public Specification<Entry> hasDateBetween(LocalDateTime start, LocalDateTime end) {
-            // TODO: At the moment, it's mandatory to use periods of time
-            return (root, query, cb) -> cb.and(
-                        cb.greaterThanOrEqualTo(root.get("accountingDate"), start),
-                        cb.lessThan(root.get("accountingDate"), end)  // < au lieu de <=
-                  );
+      public Specification<Entry> hasDateBetween(LocalDate startDate, LocalDate endDate) {
+            return (root, query, cb) -> {
+                  if (startDate != null && endDate != null) {
+                        return cb.and(
+                        cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate.atStartOfDay()),
+                        cb.lessThan(root.get("accountingDate"), endDate.plusDays(1).atStartOfDay())
+                        );
+                  } else if (startDate != null) {
+                        return cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate.atStartOfDay());
+                  } else if (endDate != null) {
+                        return cb.lessThan(root.get("accountingDate"), endDate.plusDays(1).atStartOfDay());
+                  } else {
+                        return cb.conjunction(); // Retourne toujours vrai si les deux sont null
+                  }
+            };
       }
 
       public static Specification<Entry> hasAnyTag(Set<Long> tagIds) {
