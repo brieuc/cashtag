@@ -47,4 +47,21 @@ public class TagDto {
             minimum = "0"
     )
     private Integer sortingOrder;
+
+    @Schema(
+            description = "Currency associated with this tag"
+    )
+    private CurrencyDto currency;
+
+    @Schema(
+            description = "Whether the tag represents cumulative values",
+            example = "false"
+    )
+    private Boolean isCumulative;
+
+    @Schema(
+            description = "Whether the tag is hidden from display",
+            example = "false"
+    )
+    private Boolean hidden;
 }

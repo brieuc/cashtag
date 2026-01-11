@@ -18,6 +18,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.data.repository.query.Param;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -38,19 +39,15 @@ public class PeriodController {
     private final PageRequestMapper pageRequestMapper;
 
     @Operation(summary = "Récupérer toutes les périodes", description = "Retourne une liste paginée de toutes les périodes comptables")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Liste des périodes récupérée avec succès",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = PeriodDto.class))))
-    })
     @GetMapping
-    public ResponseEntity<Page<PeriodDto>> getPeriods(
+    public ResponseEntity<PageImpl<PeriodDto>> getPeriods(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
 
         Specification<Period> specification = Specification.unrestricted();
         Page<PeriodDto> periods = periodService.getPeriods(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(periodMapper::toDto);
 
-        return ResponseEntity.ok(periods);
+        return ResponseEntity.ok(new PageImpl<>(periods.getContent(), periods.getPageable(), periods.getTotalElements()));
     }
 
     @Operation(summary = "Récupérer une période par son ID", description = "Retourne une période spécifique")

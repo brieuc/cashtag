@@ -27,4 +27,14 @@ public class Tag {
     private String icon;
     @Column(name = "sorting_order")
     private Integer sortingOrder;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_code")
+    private Currency currency;
+
+    @Column(name = "is_cumulative", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean isCumulative;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean hidden;
 }

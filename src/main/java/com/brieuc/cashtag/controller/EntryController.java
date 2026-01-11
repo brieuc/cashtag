@@ -26,6 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -54,18 +55,8 @@ public class EntryController {
             summary = "Récupérer toutes les entrées",
             description = "Retourne une liste paginée d'entrées filtrées selon les critères de recherche fournis"
     )
-    @ApiResponses(value = {
-            @ApiResponse(
-                    responseCode = "200",
-                    description = "Liste des entrées récupérée avec succès",
-                    content = @Content(
-                            mediaType = "application/json",
-                            array = @ArraySchema(schema = @Schema(implementation = EntryDto.class))
-                    )
-            )
-    })
     @GetMapping
-    public ResponseEntity<Page<EntryDto>> getEntries(
+    public ResponseEntity<PageImpl<EntryDto>> getEntries(
             @Parameter(description = "Critères de filtrage des entrées")
             @ParameterObject EntrySpecificationDto entrySpecificationDto,
             @Parameter(description = "Paramètres de pagination (page, size, sort)")
@@ -73,7 +64,9 @@ public class EntryController {
         Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
         Page<EntryDto> entries = entryService.getEntries(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(entryMapper::tDto);
-        return ResponseEntity.ok(entries);
+        return ResponseEntity.ok(new PageImpl<>(entries.getContent(),
+                                                entries.getPageable(),
+                                                entries.getTotalElements()));
     }
 
     @Operation(

@@ -33,7 +33,7 @@ public class EntryMapperImpl implements EntryMapper {
                               .description(entryDto.getDescription())
                               // Le problème c'est qu'on ne vérifie pas que le tag existe
                               //.tags(entryDto.getTags().stream().map(tagMapper::toEntity).collect(Collectors.toSet()))
-                              .tags(entryDto.getTags().stream().map(t -> tagService.getById(t.getId())).collect(Collectors.toSet()))
+                              .tags(entryDto.getTags() == null ? null : entryDto.getTags().stream().map(t -> tagService.getById(t.getId())).collect(Collectors.toSet()))
                               .currency(currencyService.getCurrencyByCode(entryDto.getCurrencyCode()))
                               .build();
 
@@ -50,7 +50,7 @@ public class EntryMapperImpl implements EntryMapper {
                               .currencyCode(entry.getCurrency().getCode())
                               .title(entry.getTitle())
                               .description(entry.getDescription())
-                              .tags(entry.getTags().stream().map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet()))
+                              .tags(entry.getTags() == null ? null : entry.getTags().stream().map(tag -> tagMapper.toDto(tag)).collect(Collectors.toSet()))
                               .build();
             return entryDto;
       }

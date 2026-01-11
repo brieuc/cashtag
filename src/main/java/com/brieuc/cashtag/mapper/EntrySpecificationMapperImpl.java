@@ -2,7 +2,9 @@ package com.brieuc.cashtag.mapper;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -14,7 +16,10 @@ import com.brieuc.cashtag.dto.EntrySpecificationDto;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Tag;
 
+import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Join;
+import jakarta.persistence.criteria.Root;
+import jakarta.persistence.criteria.Subquery;
 
 @Service
 public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
@@ -23,7 +28,7 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
       public Specification<Entry> toEntity(EntrySpecificationDto entrySpecificationDto) {
             return hasDateBetween(entrySpecificationDto.getStartDate(),
                                     entrySpecificationDto.getEndDate())
-                        .and(hasAnyTag(entrySpecificationDto.getTagIds()));
+                        .and(hasAllTags(entrySpecificationDto.getTagIds()));
       }
 
       /*
@@ -49,12 +54,27 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
             };
       }
 
-      public static Specification<Entry> hasAnyTag(Set<Long> tagIds) {
-            if (Objects.isNull(tagIds))
+      public static Specification<Entry> hasAllTags(Set<Long> tagIds) {
+            if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
                   return null;
+            }
             return (root, query, cb) -> {
-                  Join<Entry, Tag> tags = root.join("tags");
-                  return tags.get("id").in(tagIds);
+                  // Pour chaque tagId, on crée une subquery qui vérifie que l'entry possède ce tag
+                  // L'entry doit satisfaire TOUTES les subqueries
+                  List<Predicate> predicates = new ArrayList<>();
+                  
+                  for (Long tagId : tagIds) {
+                        Subquery<Long> subquery = query.subquery(Long.class);
+                        Root<Entry> subRoot = subquery.correlate(root);
+                        Join<Entry, Tag> subTags = subRoot.join("tags");
+                        
+                        subquery.select(cb.literal(1L))
+                              .where(cb.equal(subTags.get("id"), tagId));
+                        
+                        predicates.add(cb.exists(subquery));
+                  }
+                  
+                  return cb.and(predicates.toArray(new Predicate[0]));
             };
       }
 }
