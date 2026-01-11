@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -34,19 +35,15 @@ public class TagController {
     private final PageRequestMapper pageRequestMapper;
 
     @Operation(summary = "Récupérer tous les tags", description = "Retourne une liste paginée de tous les tags")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Liste des tags récupérée avec succès",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagDto.class))))
-    })
     @GetMapping
-    public ResponseEntity<Page<TagDto>> getTags(
+    public ResponseEntity<PageImpl<TagDto>> getTags(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
 
         Specification<Tag> specification = Specification.unrestricted();
         Page<TagDto> tags = tagService.getTags(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(tagMapper::toDto);
 
-        return ResponseEntity.ok(tags);
+        return ResponseEntity.ok(new PageImpl<>(tags.getContent(), tags.getPageable(), tags.getTotalElements()));
     }
 
     @Operation(summary = "Récupérer un tag par son ID", description = "Retourne un tag spécifique")

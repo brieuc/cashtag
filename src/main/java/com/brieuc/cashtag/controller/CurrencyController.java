@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,19 +34,15 @@ public class CurrencyController {
     private final PageRequestMapper pageRequestMapper;
 
     @Operation(summary = "Récupérer toutes les devises", description = "Retourne une liste paginée de toutes les devises")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Liste des devises récupérée avec succès",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = CurrencyDto.class))))
-    })
     @GetMapping
-    public ResponseEntity<Page<CurrencyDto>> getCurrencies(
+    public ResponseEntity<PageImpl<CurrencyDto>> getCurrencies(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
 
         Specification<Currency> specification = Specification.unrestricted();
         Page<CurrencyDto> currencies = currencyService.getCurrencies(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(currencyMapper::toDto);
 
-        return ResponseEntity.ok(currencies);
+        return ResponseEntity.ok(new PageImpl<>(currencies.getContent(), currencies.getPageable(), currencies.getTotalElements()));
     }
 
     @Operation(summary = "Récupérer une devise par son code", description = "Retourne une devise spécifique identifiée par son code ISO")

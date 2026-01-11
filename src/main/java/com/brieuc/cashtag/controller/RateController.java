@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -33,17 +34,13 @@ public class RateController {
     private final RateMapper rateMapper;
 
     @Operation(summary = "Récupérer tous les taux de change", description = "Retourne une liste paginée de tous les taux de change")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Liste des taux récupérée avec succès",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = RateDto.class))))
-    })
     @GetMapping
-    public ResponseEntity<Page<RateDto>> getRates(
+    public ResponseEntity<PageImpl<RateDto>> getRates(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
         Specification<Rate> specification = Specification.unrestricted();
         Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(rateMapper::toDto);
-        return ResponseEntity.ok(rates);
+        return ResponseEntity.ok(new PageImpl<>(rates.getContent(), rates.getPageable(), rates.getTotalElements()));
     }
 
     @Operation(summary = "Récupérer un taux par son ID", description = "Retourne un taux de change spécifique")
@@ -64,14 +61,14 @@ public class RateController {
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = RateDto.class))))
     })
     @GetMapping("/currency/{currencyCode}")
-    public ResponseEntity<Page<RateDto>> getRatesByCurrency(
+    public ResponseEntity<PageImpl<RateDto>> getRatesByCurrency(
             @Parameter(description = "Code ISO de la devise", required = true, example = "EUR") @PathVariable String currencyCode,
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
         // TODO: Implement specification with currency filter
         Specification<Rate> specification = Specification.unrestricted();
         Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(rateMapper::toDto);
-        return ResponseEntity.ok(rates);
+        return ResponseEntity.ok(new PageImpl<>(rates.getContent(), rates.getPageable(), rates.getTotalElements()));
     }
 
     @Operation(summary = "Créer un nouveau taux", description = "Crée un nouveau taux de change")

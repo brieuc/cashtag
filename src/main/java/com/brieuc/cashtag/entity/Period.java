@@ -28,4 +28,11 @@ public class Period {
 
     @Column(name = "end_date", nullable = false)
     private LocalDateTime endDate;
+
+    @ManyToOne
+    @JoinColumn(name = "currency_code")
+    private Currency currency;
+
+    @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
+    private Boolean hidden;
 }

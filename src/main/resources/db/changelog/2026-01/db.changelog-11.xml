@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+   xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.5.xsd">
+
+    <!-- Add hidden column to tag table -->
+    <changeSet id="5" author="Brieuc">
+        <addColumn tableName="tag">
+            <column name="hidden" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Add hidden column to period table -->
+    <changeSet id="6" author="Brieuc">
+        <addColumn tableName="period">
+            <column name="hidden" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+
+    <!-- Add currency_code column to tag table -->
+    <changeSet id="7" author="Brieuc">
+        <addColumn tableName="tag">
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add foreign key constraint -->
+        <addForeignKeyConstraint baseTableName="tag"
+                                 baseColumnNames="currency_code"
+                                 constraintName="fk_tag_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="RESTRICT"/>
+    </changeSet>
+
+    <!-- Add currency_code column to period table -->
+    <changeSet id="8" author="Brieuc">
+        <addColumn tableName="period">
+            <column name="currency_code" type="VARCHAR(3)">
+                <constraints nullable="true"/>
+            </column>
+        </addColumn>
+
+        <!-- Add foreign key constraint -->
+        <addForeignKeyConstraint baseTableName="period"
+                                 baseColumnNames="currency_code"
+                                 constraintName="fk_period_currency"
+                                 referencedTableName="currency"
+                                 referencedColumnNames="code"
+                                 onDelete="RESTRICT"/>
+    </changeSet>
+
+    <!-- Add is_cumulative column to tag table -->
+    <changeSet id="9" author="Brieuc">
+        <addColumn tableName="tag">
+            <column name="is_cumulative" type="BOOLEAN" defaultValueBoolean="false">
+                <constraints nullable="false"/>
+            </column>
+        </addColumn>
+    </changeSet>
+</databaseChangeLog>

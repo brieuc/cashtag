@@ -43,4 +43,15 @@ public class PeriodDto {
             requiredMode = Schema.RequiredMode.REQUIRED
     )
     private LocalDateTime endDate;
+
+    @Schema(
+            description = "Currency associated with this period"
+    )
+    private CurrencyDto currency;
+
+    @Schema(
+            description = "Whether the period is hidden from display",
+            example = "false"
+    )
+    private Boolean hidden;
 }
