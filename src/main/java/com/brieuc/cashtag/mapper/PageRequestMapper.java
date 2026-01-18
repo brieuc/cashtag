@@ -28,13 +28,13 @@ public class PageRequestMapper {
     }
     
     private Sort.Order parseSort(String sort) {
-        String[] parts = sort.split(",");
+        String[] parts = sort.split(":");
         String property = parts[0];
-        
+
         if (parts.length > 1 && "desc".equalsIgnoreCase(parts[1])) {
             return Sort.Order.desc(property);
         }
-        
+
         return Sort.Order.asc(property);
     }
 }
