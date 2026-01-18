@@ -200,9 +200,11 @@ public class EntryController {
             )
             @RequestBody EntryDto entryDto) {
 
+        /* TODO: à voir si on remet ça plus tard car pour l'instant entryDto ne contient pas l'id
+        car cela vient du formData renvoyé sans id par le modal.
         if(!id.equals(entryDto.getId()))
                 throw new RuntimeException("no tag corresponding to this id");
-
+        */
         Entry updatedEntry = entryService.update(entryMapper.toEntity(entryDto));
         return ResponseEntity.status(HttpStatus.OK).body(entryMapper.tDto(updatedEntry));
     }

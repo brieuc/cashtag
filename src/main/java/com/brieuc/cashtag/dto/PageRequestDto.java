@@ -6,8 +6,10 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
 import lombok.Getter;
+import lombok.Setter;
 
 @Getter
+@Setter
 @Schema(description = "Pagination parameters for list queries")
 public class PageRequestDto {
     @Schema(
@@ -23,15 +25,15 @@ public class PageRequestDto {
             description = "Number of elements per page",
             example = "20",
             minimum = "1",
-            maximum = "100"
+            maximum = "1000"
     )
     @Min(1)
-    @Max(100)
+    @Max(1000)
     Integer size;
 
     @Schema(
-            description = "Sort criteria (format: 'property,direction' where direction = asc|desc)",
-            example = "[\"accountingDate,desc\", \"title,asc\"]"
+            description = "Sort criteria (format: 'property:direction' where direction = asc|desc)",
+            example = "[\"accountingDate:desc\", \"title:asc\"]"
     )
     List<String> sort;
 }
