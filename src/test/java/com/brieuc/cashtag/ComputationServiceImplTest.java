@@ -54,6 +54,15 @@ public class ComputationServiceImplTest {
 
       @Test
       void ShouldComputeWithSameCurrencyBetweenEntryAndTargetCurrency() {
+            /*
+            The entry contains 1000.10 CHF
+            CHF is the system's reference currency
+            User requests the total in CHF
+            Entry currency matches target currency (both CHF)
+            No conversion needed
+            Test verifies 1 entry is counted
+            Test verifies the total amount is 1000.10 (unchanged)
+            */
 
             Entry entry = Entry.builder()
                   .accountingDate(LocalDateTime.now())
@@ -78,7 +87,17 @@ public class ComputationServiceImplTest {
 
       @Test
       void ShouldReturnTheSameCurrencyBetweenRequestAndResponse() {
-                  Entry entry = Entry.builder()
+            /*
+            The entry contains 1000.10 CHF
+            CHF is the system's reference currency
+            User requests the total in CHF
+            Entry currency matches target currency (both CHF)
+            No conversion needed
+            Test verifies the response currency code matches the request currency code
+            */
+
+            // Arrange
+            Entry entry = Entry.builder()
                   .accountingDate(LocalDateTime.now())
                   .title("Entry Test Title")
                   .description("Entry Test Description")
@@ -89,22 +108,34 @@ public class ComputationServiceImplTest {
             Page<Entry> page = new PageImpl<>(List.of(entry));
             when(entryService.getEntries(any(), any())).thenReturn(page);
 
+            // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDate.of(2020, 1, 1),
                         LocalDate.of(2020, 12, 31),
                         null, "CHF");
-
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+
+            // Assert
             assertEquals(computationRequestDto.targetCurrencyCode(), computationResponseDto.targetCurrencyCode());
       }
 
       @Test
       void ShouldConvertEntriesWhenInDifferentCurrencyThanTargetCurrency() {
-                  Entry entry = Entry.builder()
-                  .accountingDate(LocalDateTime.now())
-                  .amount(BigDecimal.valueOf(1000))
-                  .currency(new Currency("EUR", false))
-                  .build();
+            /*
+            The entry contains 1000 EUR
+            CHF is the system's reference currency
+            User requests the total in CHF (the reference currency)
+            System retrieves the EUR to CHF rate: 0.5 (1 EUR = 0.5 CHF)
+            System calculates: 1000 / 0.5 = 2000 CHF
+            Test verifies the result is 2000
+            */
+
+            // Arrange
+            Entry entry = Entry.builder()
+            .accountingDate(LocalDateTime.now())
+            .amount(BigDecimal.valueOf(1000))
+            .currency(new Currency("EUR", false))
+            .build();
 
             Page<Entry> page = new PageImpl<>(List.of(entry));
             when(entryService.getEntries(any(), any())).thenReturn(page);
@@ -113,43 +144,67 @@ public class ComputationServiceImplTest {
                   .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
             
 
+            // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDate.of(2020, 1, 1),
                         LocalDate.of(2020, 12, 31),
                         null, "CHF");
-
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+
+            // Assert
             assertEquals(1000 / 0.5, computationResponseDto.totalAmount().doubleValue());
       }
 
       @Test
       void ShouldThrowIfTargetCurrencyNotMatchEntryCurrencyAndIsNotReferenceCurrency() {
-                  Entry entry = Entry.builder()
-                  .accountingDate(LocalDateTime.now())
-                  .amount(BigDecimal.valueOf(1000))
-                  .currency(new Currency("EUR", false))
-                  .build();
+
+            /*
+            The entry contains 1000 EUR
+            CHF is the system's reference currency
+            User requests the total in USD
+            EUR is neither the target currency (USD) nor the reference currency (CHF)
+            System cannot convert EUR to USD without going through CHF first
+            Test verifies that EntityNotFoundException is thrown
+            This scenario requires a EUR→CHF rate that doesn't exist in the mock
+            */
+
+            // Arrange
+            Entry entry = Entry.builder()
+            .accountingDate(LocalDateTime.now())
+            .amount(BigDecimal.valueOf(1000))
+            .currency(new Currency("EUR", false))
+            .build();
 
             Page<Entry> page = new PageImpl<>(List.of(entry));
             when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
 
+            // Act & Assert
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDate.of(2020, 1, 1),
                         LocalDate.of(2020, 12, 31),
                         null, "USD");
-
             assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(computationRequestDto));
 
       }
 
       @Test
       void ShouldComputeIfTargetCurrencyIsNotReferenceCurrencyAndEntryCurrencyNotTargetCurrencyButAtLeastReferenceCurrency() {
-                  Entry entry = Entry.builder()
-                  .accountingDate(LocalDateTime.now())
-                  .amount(BigDecimal.valueOf(1000))
-                  .currency(new Currency("CHF", false))
-                  .build();
+            /* 
+            The entry contains 1000 CHF
+            CHF is the system's reference currency
+            User requests the total in EUR
+            System retrieves the CHF to EUR rate: 0.5
+            System calculates: 1000 / (1 / 0.5) = 500 EUR
+            Test verifies the result is 500
+            */
+
+            // Arrange
+            Entry entry = Entry.builder()
+            .accountingDate(LocalDateTime.now())
+            .amount(BigDecimal.valueOf(1000))
+            .currency(new Currency("CHF", false))
+            .build();
 
             Page<Entry> page = new PageImpl<>(List.of(entry));
             when(entryService.getEntries(any(), any())).thenReturn(page);
@@ -157,14 +212,15 @@ public class ComputationServiceImplTest {
             when(rateService.getRateByCurrenciesAndDate(any(), any(), any()))
                   .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
 
-            
+            // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDate.of(2020, 1, 1),
                         LocalDate.of(2020, 12, 31),
                         null, "EUR");
 
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
-            assertEquals(1000 / (1 / 0.5), computationResponseDto.totalAmount().doubleValue());
 
+            // Assert
+            assertEquals(1000 / (1 / 0.5), computationResponseDto.totalAmount().doubleValue());
       }
 }

@@ -2,10 +2,12 @@ package com.brieuc.cashtag.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -14,6 +16,7 @@ import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import com.brieuc.cashtag.dto.EntrySpecificationDto;
+import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.dto.calculation.ComputationCurrencyAmountDto;
 import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
 import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
@@ -38,8 +41,17 @@ public class ComputationServiceImpl implements ComputationService {
 
       @Override
       public ComputationResponseDto computeSum(ComputationRequestDto computationRequestDto) {
+            LocalDate fromDate = computationRequestDto.startDate();
+            // There is a specific case when there is only one tag and it is cumulative, those kind of tags
+            // keep the balance along the way then we need to compute the entries from the beginning.
+            if (computationRequestDto.tags().size() == 1) {
+                  Optional<TagDto> tagDto = computationRequestDto.tags().stream().filter(t -> t.getIsCumulative()).findFirst();
+                  if (tagDto.isPresent())
+                        fromDate = null;
+            }
+
             EntrySpecificationDto entrySpecificationDto = EntrySpecificationDto.builder()
-                                                                  .startDate(computationRequestDto.startDate())
+                                                                  .startDate(fromDate)
                                                                   .endDate(computationRequestDto.endDate())
                                                                   .build();
 
@@ -118,6 +130,6 @@ public class ComputationServiceImpl implements ComputationService {
                   ComputationCurrencyAmountDto computationCurrencyAmountDto = new ComputationCurrencyAmountDto(currencyCode, numberOfEntries, totalAmount);
                   currencyMap.put(currencyCode, computationCurrencyAmountDto);
             }
-            return null;
+            return currencyMap;
       }
 }
