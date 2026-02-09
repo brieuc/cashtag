@@ -20,4 +20,7 @@ public class CurrencyDto {
             maxLength = 3
     )
     private String code;
+
+    @Schema(description = "Whether this currency is the reference currency")
+    private Boolean reference;
 }

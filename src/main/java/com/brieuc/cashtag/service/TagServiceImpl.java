@@ -46,6 +46,9 @@ public class TagServiceImpl implements TagService {
         tag.setDescription(detachedTag.getDescription());
         tag.setIcon(detachedTag.getIcon());
         tag.setSortingOrder(detachedTag.getSortingOrder());
+        tag.setIsCumulative(detachedTag.getIsCumulative());
+        tag.setHidden(detachedTag.getHidden());
+        tag.setCurrency(detachedTag.getCurrency());
         return tagRepository.save(tag);
     }
 
