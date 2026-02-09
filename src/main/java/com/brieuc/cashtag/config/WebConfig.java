@@ -1,6 +1,7 @@
 package com.brieuc.cashtag.config;
 
 import java.util.Properties;
+import java.util.concurrent.TimeUnit;
 
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;
 import org.springframework.boot.info.BuildProperties;
@@ -8,6 +9,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.data.web.config.EnableSpringDataWebSupport;
 import org.springframework.data.web.config.EnableSpringDataWebSupport.PageSerializationMode;
+import org.springframework.http.CacheControl;
 import org.springframework.web.servlet.config.annotation.CorsRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
@@ -22,9 +24,9 @@ public class WebConfig implements WebMvcConfigurer {
     
     @Override
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
-        registry.addResourceHandler("/**")
-        .addResourceLocations("classpath:/static/","classpath:/images/")
-        .setCachePeriod(0);
+        registry.addResourceHandler("/uploads/**")
+        .addResourceLocations("file:/var/app/uploads/")
+        .setCacheControl(CacheControl.maxAge(365, TimeUnit.DAYS));
     }
 
     @Override
