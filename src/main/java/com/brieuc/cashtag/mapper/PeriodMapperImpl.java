@@ -13,7 +13,6 @@ import lombok.RequiredArgsConstructor;
 public class PeriodMapperImpl implements PeriodMapper {
 
       private final CurrencyService currencyService;
-      private final CurrencyMapper currencyMapper;
 
       @Override
       public Period toEntity(PeriodDto periodDto) {
@@ -22,7 +21,7 @@ public class PeriodMapperImpl implements PeriodMapper {
                   .title(periodDto.getTitle())
                   .startDate(periodDto.getStartDate())
                   .endDate(periodDto.getEndDate())
-                  .currency(periodDto.getCurrency() != null ? currencyService.getCurrencyByCode(periodDto.getCurrency().getCode()) : null)
+                  .currency(periodDto.getCurrencyCode() != null ? currencyService.getCurrencyByCode(periodDto.getCurrencyCode()) : null)
                   .hidden(periodDto.getHidden())
                   .build();
             return period;
@@ -35,7 +34,7 @@ public class PeriodMapperImpl implements PeriodMapper {
                   .title(period.getTitle())
                   .startDate(period.getStartDate())
                   .endDate(period.getEndDate())
-                  .currency(period.getCurrency() != null ? currencyMapper.toDto(period.getCurrency()) : null)
+                  .currencyCode(period.getCurrency() != null ? period.getCurrency().getCode() : null)
                   .hidden(period.getHidden())
                   .build();
             return periodDto;

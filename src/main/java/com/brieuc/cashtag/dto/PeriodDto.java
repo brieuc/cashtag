@@ -45,9 +45,12 @@ public class PeriodDto {
     private LocalDateTime endDate;
 
     @Schema(
-            description = "Currency associated with this period"
+            description = "ISO 4217 currency code (3 letters)",
+            example = "CHF",
+            minLength = 3,
+            maxLength = 3
     )
-    private CurrencyDto currency;
+    private String currencyCode;
 
     @Schema(
             description = "Whether the period is hidden from display",
