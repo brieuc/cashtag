@@ -25,6 +25,7 @@ public class Tag {
     private String description;
 
     private String icon;
+    
     @Column(name = "sorting_order")
     private Integer sortingOrder;
 

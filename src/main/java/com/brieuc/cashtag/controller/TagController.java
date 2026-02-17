@@ -39,6 +39,7 @@ public class TagController {
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto) {
 
         Specification<Tag> specification = Specification.unrestricted();
+
         Page<TagDto> tags = tagService.getTags(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(tagMapper::toDto);
 
@@ -71,6 +72,15 @@ public class TagController {
         Tag saved = tagService.create(tagMapper.toEntity(tagDto));
         return ResponseEntity.status(HttpStatus.CREATED).body(tagMapper.toDto(saved));
     }
+
+    @PostMapping("/tags/{id}/icon")
+    public Tag uploadIcon(@PathVariable Long id, @MultipartFile file) {
+        // Validation (type MIME, taille max ~500Ko)
+        // Génère un nom unique (UUID + extension)
+        // Sauvegarde dans un dossier dédié (ex: /uploads/tags/)
+        // Met à jour tag.iconPath
+        f
+        }
 
     @Operation(summary = "Mettre à jour un tag", description = "Met à jour un tag existant")
     @ApiResponses(value = {

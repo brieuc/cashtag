@@ -49,9 +49,12 @@ public class TagDto {
     private Integer sortingOrder;
 
     @Schema(
-            description = "Currency associated with this tag"
+            description = "ISO 4217 currency code (3 letters)",
+            example = "CHF",
+            minLength = 3,
+            maxLength = 3
     )
-    private CurrencyDto currency;
+    private String currencyCode;
 
     @Schema(
             description = "Whether the tag represents cumulative values",
