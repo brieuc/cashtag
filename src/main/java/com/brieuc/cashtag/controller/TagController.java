@@ -13,14 +13,15 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import lombok.RequiredArgsConstructor;
-
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 
 @io.swagger.v3.oas.annotations.tags.Tag(name = "Tags", description = "API de gestion des tags/étiquettes")
@@ -73,13 +74,18 @@ public class TagController {
         return ResponseEntity.status(HttpStatus.CREATED).body(tagMapper.toDto(saved));
     }
 
-    @PostMapping("/tags/{id}/icon")
-    public Tag uploadIcon(@PathVariable Long id, @MultipartFile file) {
-        // Validation (type MIME, taille max ~500Ko)
-        // Génère un nom unique (UUID + extension)
-        // Sauvegarde dans un dossier dédié (ex: /uploads/tags/)
-        // Met à jour tag.iconPath
-        f
+        @Operation(summary = "Uploader une icône pour un tag")
+                @ApiResponses(value = {
+                @ApiResponse(responseCode = "200", description = "Icône uploadée avec succès"),
+                @ApiResponse(responseCode = "404", description = "Tag non trouvé"),
+                @ApiResponse(responseCode = "400", description = "Fichier invalide")
+        })
+        @PostMapping(value = "/{id}/icon", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+        public ResponseEntity<TagDto> uploadIcon(       @Parameter(description = "Tag id") @PathVariable Long id,
+                                                        @RequestParam("file") MultipartFile file) {
+        
+        Tag tag = tagService.uploadIcon(id, file);
+        return ResponseEntity.ok(tagMapper.toDto(tag));
         }
 
     @Operation(summary = "Mettre à jour un tag", description = "Met à jour un tag existant")
