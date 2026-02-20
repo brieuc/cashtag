@@ -1,3 +1,7 @@
+app:
+  uploads:
+    path: /Users/brieuc/cashicon
+
 spring:
   application:
     name: Cashtag
@@ -18,3 +22,5 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
+
+    

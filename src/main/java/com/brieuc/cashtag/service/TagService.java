@@ -3,6 +3,7 @@ package com.brieuc.cashtag.service;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.brieuc.cashtag.entity.Tag;
 
@@ -14,5 +15,5 @@ public interface TagService {
       Tag create(@NotNull Tag tag);
       Tag update(@NotNull Tag tag);
       void deleteById(@NotNull Long id);
-      
+      Tag uploadIcon(Long id, MultipartFile file);
 }
