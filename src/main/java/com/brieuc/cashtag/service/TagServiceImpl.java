@@ -52,6 +52,8 @@ public class TagServiceImpl implements TagService {
 
     @Override
     public Tag create(@NotNull Tag tag) {
+        //TODO Put some validation on sortingOrder when creating or updating
+        tag.setSortingOrder((int) (tagRepository.count()+1));
         return tagRepository.save(tag);
     }
 

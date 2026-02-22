@@ -1,6 +1,7 @@
 package com.brieuc.cashtag.dto;
 
 import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.Schema.RequiredMode;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -44,7 +45,8 @@ public class TagDto {
     @Schema(
             description = "Sort order for display",
             example = "10",
-            minimum = "0"
+            minimum = "0",
+            requiredMode = Schema.RequiredMode.REQUIRED
     )
     private Integer sortingOrder;
 

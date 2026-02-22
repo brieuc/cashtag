@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -73,5 +74,5 @@ public class EntryDto {
             description = "List of tags/labels associated with this entry",
             example = "[{\"id\": 1, \"name\": \"Office\"}, {\"id\": 2, \"name\": \"IT\"}]"
     )
-    private Set<TagDto> tags;
+    private List<TagDto> tags;
 }
