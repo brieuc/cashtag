@@ -6,25 +6,20 @@ import lombok.*;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Entity
-@Table(name = "entry")
+@Table(name = "recurrency")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Entry {
+public class Recurrency {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(name = "accounting_date", nullable = false)
-    private LocalDateTime accountingDate;
 
     @Column(name = "modification_date", nullable = false)
     private LocalDateTime modificationDate;
@@ -42,11 +37,18 @@ public class Entry {
     @JoinColumn(name = "currency_code", nullable = false)
     private Currency currency;
 
+    @Column(name = "start_date", nullable = false)
+    private LocalDate startDate;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Frequency frequency;
+
     @Builder.Default
     @ManyToMany
     @JoinTable(
-        name = "entry_tag",
-        joinColumns = @JoinColumn(name = "entry_id"),
+        name = "recurrency_tag",
+        joinColumns = @JoinColumn(name = "recurrency_id"),
         inverseJoinColumns = @JoinColumn(name = "tag_id")
     )
     private Set<Tag> tags = new HashSet<>();
