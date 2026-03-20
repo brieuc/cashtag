@@ -1,13 +1,13 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.dto.PageRequestDto;
-import com.brieuc.cashtag.dto.RecurrencyDto;
-import com.brieuc.cashtag.dto.RecurrencySpecificationDto;
-import com.brieuc.cashtag.entity.Recurrency;
+import com.brieuc.cashtag.dto.RecurrenceDto;
+import com.brieuc.cashtag.dto.RecurrenceSpecificationDto;
+import com.brieuc.cashtag.entity.Recurrence;
 import com.brieuc.cashtag.mapper.PageRequestMapper;
-import com.brieuc.cashtag.mapper.RecurrencyMapper;
-import com.brieuc.cashtag.mapper.RecurrencySpecificationMapper;
-import com.brieuc.cashtag.service.RecurrencyService;
+import com.brieuc.cashtag.mapper.RecurrenceMapper;
+import com.brieuc.cashtag.mapper.RecurrenceSpecificationMapper;
+import com.brieuc.cashtag.service.RecurrenceService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -24,34 +24,36 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-@Tag(name = "Recurrencies", description = "API de gestion des transactions récurrentes")
+@Tag(name = "Recurrences", description = "API de gestion des transactions récurrentes")
 @RestController
-@RequestMapping(value = "/recurrencies", produces = "application/json")
+@RequestMapping(value = "/recurrences", produces = "application/json")
 @RequiredArgsConstructor
-public class RecurrencyController {
+public class RecurrenceController {
 
-    private final RecurrencyService recurrencyService;
+    private final RecurrenceService recurrenceService;
     private final PageRequestMapper pageRequestMapper;
-    private final RecurrencyMapper recurrencyMapper;
-    private final RecurrencySpecificationMapper recurrencySpecificationMapper;
+    private final RecurrenceMapper recurrenceMapper;
+    private final RecurrenceSpecificationMapper recurrenceSpecificationMapper;
 
     @Operation(
             summary = "Récupérer toutes les récurrences",
             description = "Retourne une liste paginée de récurrences filtrées selon les critères fournis"
     )
     @GetMapping
-    public ResponseEntity<PageImpl<RecurrencyDto>> getRecurrencies(
+    public ResponseEntity<PageImpl<RecurrenceDto>> getRecurrences(
             @Parameter(description = "Critères de filtrage des récurrences")
-            @ParameterObject RecurrencySpecificationDto recurrencySpecificationDto,
+            @ParameterObject RecurrenceSpecificationDto recurrenceSpecificationDto,
             @Parameter(description = "Paramètres de pagination (page, size, sort)")
             @ParameterObject PageRequestDto pageRequestDto) {
-        Specification<Recurrency> specification = recurrencySpecificationMapper.toEntity(recurrencySpecificationDto);
-        Page<RecurrencyDto> recurrencies = recurrencyService.getRecurrencies(specification, pageRequestMapper.toPageable(pageRequestDto))
-                .map(recurrencyMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(recurrencies.getContent(),
-                                               recurrencies.getPageable(),
-                                               recurrencies.getTotalElements()));
+        Specification<Recurrence> specification = recurrenceSpecificationMapper.toEntity(recurrenceSpecificationDto);
+        Page<RecurrenceDto> recurrences = recurrenceService.getRecurrences(specification, pageRequestMapper.toPageable(pageRequestDto))
+                .map(recurrenceMapper::toDto);
+        return ResponseEntity.ok(new PageImpl<>(recurrences.getContent(),
+                                               recurrences.getPageable(),
+                                               recurrences.getTotalElements()));
     }
+
+    
 
     @Operation(
             summary = "Récupérer une récurrence par son ID",
@@ -61,15 +63,15 @@ public class RecurrencyController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Récurrence trouvée",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrencyDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrenceDto.class))
             ),
             @ApiResponse(responseCode = "404", description = "Récurrence non trouvée", content = @Content)
     })
     @GetMapping("/{id}")
-    public ResponseEntity<RecurrencyDto> getRecurrencyById(
+    public ResponseEntity<RecurrenceDto> getRecurrenceById(
             @Parameter(description = "ID de la récurrence à récupérer", required = true, example = "1")
             @PathVariable Long id) {
-        return ResponseEntity.ok(recurrencyMapper.toDto(recurrencyService.getById(id)));
+        return ResponseEntity.ok(recurrenceMapper.toDto(recurrenceService.getById(id)));
     }
 
     @Operation(
@@ -80,20 +82,20 @@ public class RecurrencyController {
             @ApiResponse(
                     responseCode = "201",
                     description = "Récurrence créée avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrencyDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrenceDto.class))
             ),
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
     })
     @PostMapping(consumes = "application/json")
-    public ResponseEntity<RecurrencyDto> createRecurrency(
+    public ResponseEntity<RecurrenceDto> createRecurrence(
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Informations de la récurrence à créer",
                     required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrencyDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrenceDto.class))
             )
-            @RequestBody RecurrencyDto recurrencyDto) {
-        Recurrency newRecurrency = recurrencyService.create(recurrencyMapper.toEntity(recurrencyDto));
-        return ResponseEntity.status(HttpStatus.CREATED).body(recurrencyMapper.toDto(newRecurrency));
+            @RequestBody RecurrenceDto recurrenceDto) {
+        Recurrence newRecurrence = recurrenceService.create(recurrenceMapper.toEntity(recurrenceDto));
+        return ResponseEntity.status(HttpStatus.CREATED).body(recurrenceMapper.toDto(newRecurrence));
     }
 
     @Operation(
@@ -104,23 +106,23 @@ public class RecurrencyController {
             @ApiResponse(
                     responseCode = "200",
                     description = "Récurrence mise à jour avec succès",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrencyDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrenceDto.class))
             ),
             @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content),
             @ApiResponse(responseCode = "404", description = "Récurrence non trouvée", content = @Content)
     })
     @PutMapping(value = "/{id}", consumes = "application/json")
-    public ResponseEntity<RecurrencyDto> updateRecurrency(
+    public ResponseEntity<RecurrenceDto> updateRecurrence(
             @Parameter(description = "ID de la récurrence à mettre à jour", required = true, example = "1")
             @PathVariable Long id,
             @io.swagger.v3.oas.annotations.parameters.RequestBody(
                     description = "Nouvelles informations de la récurrence",
                     required = true,
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrencyDto.class))
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RecurrenceDto.class))
             )
-            @RequestBody RecurrencyDto recurrencyDto) {
-        Recurrency updatedRecurrency = recurrencyService.update(recurrencyMapper.toEntity(recurrencyDto));
-        return ResponseEntity.status(HttpStatus.OK).body(recurrencyMapper.toDto(updatedRecurrency));
+            @RequestBody RecurrenceDto recurrenceDto) {
+        Recurrence updatedRecurrence = recurrenceService.update(recurrenceMapper.toEntity(recurrenceDto));
+        return ResponseEntity.status(HttpStatus.OK).body(recurrenceMapper.toDto(updatedRecurrence));
     }
 
     @Operation(
@@ -132,11 +134,11 @@ public class RecurrencyController {
             @ApiResponse(responseCode = "404", description = "Récurrence non trouvée", content = @Content)
     })
     @DeleteMapping("/{id}")
-    public ResponseEntity<Void> deleteRecurrency(
+    public ResponseEntity<Void> deleteRecurrence(
             @Parameter(description = "ID de la récurrence à supprimer", required = true, example = "1")
             @PathVariable Long id) {
-        Recurrency recurrency = recurrencyService.getById(id);
-        recurrencyService.delete(recurrency);
+        Recurrence recurrence = recurrenceService.getById(id);
+        recurrenceService.delete(recurrence);
         return ResponseEntity.noContent().build();
     }
 }

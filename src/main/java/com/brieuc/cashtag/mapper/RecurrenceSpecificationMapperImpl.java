@@ -1,8 +1,8 @@
 package com.brieuc.cashtag.mapper;
 
-import com.brieuc.cashtag.dto.RecurrencySpecificationDto;
+import com.brieuc.cashtag.dto.RecurrenceSpecificationDto;
 import com.brieuc.cashtag.entity.Frequency;
-import com.brieuc.cashtag.entity.Recurrency;
+import com.brieuc.cashtag.entity.Recurrence;
 import com.brieuc.cashtag.entity.Tag;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Predicate;
@@ -18,16 +18,16 @@ import java.util.Objects;
 import java.util.Set;
 
 @Service
-public class RecurrencySpecificationMapperImpl implements RecurrencySpecificationMapper {
+public class RecurrenceSpecificationMapperImpl implements RecurrenceSpecificationMapper {
 
     @Override
-    public Specification<Recurrency> toEntity(RecurrencySpecificationDto dto) {
+    public Specification<Recurrence> toEntity(RecurrenceSpecificationDto dto) {
         return hasStartDateBetween(dto.getStartDate(), dto.getEndDate())
                 .and(hasAllTags(dto.getTagIds()))
                 .and(hasFrequencies(dto.getFrequencies()));
     }
 
-    public Specification<Recurrency> hasStartDateBetween(LocalDate startDate, LocalDate endDate) {
+    public Specification<Recurrence> hasStartDateBetween(LocalDate startDate, LocalDate endDate) {
         return (root, query, cb) -> {
             if (startDate != null && endDate != null) {
                 return cb.and(
@@ -44,7 +44,7 @@ public class RecurrencySpecificationMapperImpl implements RecurrencySpecificatio
         };
     }
 
-    public static Specification<Recurrency> hasAllTags(Set<Long> tagIds) {
+    public static Specification<Recurrence> hasAllTags(Set<Long> tagIds) {
         if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
             return null;
         }
@@ -53,8 +53,8 @@ public class RecurrencySpecificationMapperImpl implements RecurrencySpecificatio
             List<Predicate> predicates = new ArrayList<>();
             for (Long tagId : tagIds) {
                 Subquery<Long> subquery = query.subquery(Long.class);
-                Root<Recurrency> subRoot = subquery.correlate(root);
-                Join<Recurrency, Tag> subTags = subRoot.join("tags");
+                Root<Recurrence> subRoot = subquery.correlate(root);
+                Join<Recurrence, Tag> subTags = subRoot.join("tags");
                 subquery.select(cb.literal(1L))
                         .where(cb.equal(subTags.get("id"), tagId));
                 predicates.add(cb.exists(subquery));
@@ -63,7 +63,7 @@ public class RecurrencySpecificationMapperImpl implements RecurrencySpecificatio
         };
     }
 
-    public static Specification<Recurrency> hasFrequencies(Set<Frequency> frequencies) {
+    public static Specification<Recurrence> hasFrequencies(Set<Frequency> frequencies) {
         if (Objects.isNull(frequencies) || frequencies.isEmpty()) {
             return null;
         }

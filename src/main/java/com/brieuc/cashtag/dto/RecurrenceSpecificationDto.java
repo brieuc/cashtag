@@ -10,8 +10,8 @@ import java.util.Set;
 
 @Builder
 @Data
-@Schema(description = "Filter criteria for searching recurrencies")
-public class RecurrencySpecificationDto {
+@Schema(description = "Filter criteria for searching recurrences")
+public class RecurrenceSpecificationDto {
 
     @Schema(
             description = "Start date filter (inclusive)",
@@ -26,13 +26,13 @@ public class RecurrencySpecificationDto {
     LocalDate endDate;
 
     @Schema(
-            description = "List of tag IDs to filter recurrencies",
+            description = "List of tag IDs to filter recurrences",
             example = "[1, 2, 5]"
     )
     Set<Long> tagIds;
 
     @Schema(
-            description = "Frequencies to filter recurrencies",
+            description = "Frequencies to filter recurrences",
             example = "[\"MONTHLY\", \"YEARLY\"]"
     )
     Set<Frequency> frequencies;
