@@ -17,9 +17,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Schema(description = "Represents a recurring financial transaction")
-public class RecurrencyDto {
+public class RecurrenceDto {
 
-    @Schema(description = "Unique identifier of the recurrency", example = "1")
+    @Schema(description = "Unique identifier of the recurrence", example = "1")
     private Long id;
 
     @Schema(
@@ -30,7 +30,7 @@ public class RecurrencyDto {
     private LocalDateTime modificationDate;
 
     @Schema(
-            description = "Title or label of the recurrency",
+            description = "Title or label of the recurrence",
             example = "Loyer",
             requiredMode = Schema.RequiredMode.REQUIRED,
             maxLength = 255
@@ -38,7 +38,7 @@ public class RecurrencyDto {
     private String title;
 
     @Schema(
-            description = "Detailed description of the recurrency",
+            description = "Detailed description of the recurrence",
             example = "Loyer mensuel appartement",
             maxLength = 1000
     )
@@ -61,7 +61,7 @@ public class RecurrencyDto {
     private String currencyCode;
 
     @Schema(
-            description = "Start date of the recurrency",
+            description = "Start date of the recurrence",
             example = "2024-01-01",
             requiredMode = Schema.RequiredMode.REQUIRED
     )
@@ -74,6 +74,6 @@ public class RecurrencyDto {
     )
     private Frequency frequency;
 
-    @Schema(description = "List of tags associated with this recurrency")
+    @Schema(description = "List of tags associated with this recurrence")
     private List<TagDto> tags;
 }

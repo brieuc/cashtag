@@ -15,7 +15,7 @@ import java.util.Set;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Recurrency {
+public class Recurrence {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
