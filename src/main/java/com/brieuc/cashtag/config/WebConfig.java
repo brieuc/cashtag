@@ -23,7 +23,7 @@ import lombok.RequiredArgsConstructor;
 @EnableSpringDataWebSupport(pageSerializationMode = PageSerializationMode.VIA_DTO)
 public class WebConfig implements WebMvcConfigurer {  
 
-    @Value("${app.uploads.path}")
+    @Value("${app.uploads.path:./tmp/uploads}")
     private String uploadsPath;
     
     @Override

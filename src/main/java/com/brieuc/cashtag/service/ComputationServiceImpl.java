@@ -42,10 +42,11 @@ public class ComputationServiceImpl implements ComputationService {
       @Override
       public ComputationResponseDto computeSum(ComputationRequestDto computationRequestDto) {
             LocalDate fromDate = computationRequestDto.startDate();
+            Set<TagDto> tags = computationRequestDto.tags();
             // There is a specific case when there is only one tag and it is cumulative, those kind of tags
             // keep the balance along the way then we need to compute the entries from the beginning.
-            if (computationRequestDto.tags().size() == 1) {
-                  Optional<TagDto> tagDto = computationRequestDto.tags().stream().filter(t -> t.getIsCumulative()).findFirst();
+            if (tags != null && tags.size() == 1) {
+                  Optional<TagDto> tagDto = tags.stream().filter(t -> t.getIsCumulative()).findFirst();
                   if (tagDto.isPresent())
                         fromDate = null;
             }
@@ -57,8 +58,8 @@ public class ComputationServiceImpl implements ComputationService {
 
             // We need to manage the tags separately since an empty collection doesn't work for the
             // request. We add the tag only if we have them.
-            if (computationRequestDto.tags() != null) {
-                  entrySpecificationDto.setTagIds(computationRequestDto.tags().stream().map(t -> t.getId()).collect(Collectors.toSet()));
+            if (tags != null && !tags.isEmpty()) {
+                  entrySpecificationDto.setTagIds(tags.stream().map(t -> t.getId()).collect(Collectors.toSet()));
             }                                                              
 
             Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);

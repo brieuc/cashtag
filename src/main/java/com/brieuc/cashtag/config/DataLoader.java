@@ -17,6 +17,7 @@ import org.springframework.stereotype.Component;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Set;
 
@@ -61,26 +62,36 @@ public class DataLoader implements ApplicationRunner {
                 .title("Salaire")
                 .description("Revenus mensuels")
                 .icon("💰")
+                .isCumulative(false)
+                .hidden(false)
                 .build());
         Tag rentTag = tagRepository.save(Tag.builder()
                 .title("Loyer")
                 .description("Dépenses de logement")
                 .icon("🏠")
+                .isCumulative(false)
+                .hidden(false)
                 .build());
         Tag foodTag = tagRepository.save(Tag.builder()
                 .title("Alimentation")
                 .description("Courses et restaurants")
                 .icon("🍽️")
+                .isCumulative(false)
+                .hidden(false)
                 .build());
         Tag transportTag = tagRepository.save(Tag.builder()
                 .title("Transport")
                 .description("Déplacements et carburant")
                 .icon("🚗")
+                .isCumulative(false)
+                .hidden(false)
                 .build());
         Tag leisureTag = tagRepository.save(Tag.builder()
                 .title("Loisirs")
                 .description("Activités et divertissements")
                 .icon("🎉")
+                .isCumulative(false)
+                .hidden(false)
                 .build());
         log.info("Created {} tags", 5);
 
@@ -89,6 +100,7 @@ public class DataLoader implements ApplicationRunner {
         entry1.setAccountingDate(LocalDateTime.now().minusDays(30));
         entry1.setTitle("Salaire mensuel");
         entry1.setDescription("Salaire du mois de septembre");
+        entry1.setAmount(new BigDecimal("5000.00"));
         entry1.setCurrency(eur);
         entry1.setTags(Set.of(salaryTag));
         entryRepository.save(entry1);
@@ -97,6 +109,7 @@ public class DataLoader implements ApplicationRunner {
         entry2.setAccountingDate(LocalDateTime.now().minusDays(28));
         entry2.setTitle("Loyer octobre");
         entry2.setDescription("Paiement du loyer");
+        entry2.setAmount(new BigDecimal("1500.00"));
         entry2.setCurrency(chf);
         entry2.setTags(Set.of(rentTag));
         entryRepository.save(entry2);
@@ -105,6 +118,7 @@ public class DataLoader implements ApplicationRunner {
         entry3.setAccountingDate(LocalDateTime.now().minusDays(15));
         entry3.setTitle("Courses Carrefour");
         entry3.setDescription("Courses hebdomadaires");
+        entry3.setAmount(new BigDecimal("240.50"));
         entry3.setCurrency(eur);
         entry3.setTags(Set.of(foodTag));
         entryRepository.save(entry3);
@@ -113,6 +127,7 @@ public class DataLoader implements ApplicationRunner {
         entry4.setAccountingDate(LocalDateTime.now().minusDays(10));
         entry4.setTitle("Essence");
         entry4.setDescription("Plein d'essence");
+        entry4.setAmount(new BigDecimal("80.00"));
         entry4.setCurrency(eur);
         entry4.setTags(Set.of(transportTag));
         entryRepository.save(entry4);
@@ -121,6 +136,7 @@ public class DataLoader implements ApplicationRunner {
         entry5.setAccountingDate(LocalDateTime.now().minusDays(5));
         entry5.setTitle("Cinéma");
         entry5.setDescription("Soirée cinéma");
+        entry5.setAmount(new BigDecimal("45.00"));
         entry5.setCurrency(eur);
         entry5.setTags(Set.of(leisureTag));
         entryRepository.save(entry5);
@@ -129,6 +145,7 @@ public class DataLoader implements ApplicationRunner {
         entry6.setAccountingDate(LocalDateTime.now().minusDays(2));
         entry6.setTitle("Restaurant");
         entry6.setDescription("Dîner au restaurant");
+        entry6.setAmount(new BigDecimal("120.00"));
         entry6.setCurrency(eur);
         entry6.setTags(Set.of(foodTag, leisureTag));
         entryRepository.save(entry6);
@@ -136,7 +153,12 @@ public class DataLoader implements ApplicationRunner {
         log.info("Created {} entries", 6);
 
         // Create rates
-        Rate rateEur = new Rate(null, eur, null, null, new BigDecimal("1.0722"));
+        Rate rateEur = Rate.builder()
+                .sourceCurrency(chf)
+                .targetCurrency(eur)
+                .valueDate(LocalDate.now())
+                .rate(new BigDecimal("1.0722"))
+                .build();
 
         rateRepository.save(rateEur);
         log.info("Data initialization completed successfully!");
