@@ -13,60 +13,27 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @Schema(description = "Represents a tag/label for categorizing entries")
 public class TagDto {
-    @Schema(
-            description = "Unique identifier of the tag",
-            //accessMode = Schema.AccessMode.READ_ONLY,
-            example = "1"
-    )
+    @Schema(description = "Unique identifier of the tag", example = "1")
     private Long id;
 
-    @Schema(
-            description = "Name/title of the tag",
-            example = "Office",
-            requiredMode = Schema.RequiredMode.REQUIRED,
-            maxLength = 100
-    )
+    @Schema(description = "Name/title of the tag", example = "Office", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
     private String title;
 
-    @Schema(
-            description = "Detailed description of the tag",
-            example = "Office-related expenses and supplies",
-            maxLength = 500
-    )
+    @Schema(description = "Detailed description of the tag", example = "Office-related expenses and supplies", maxLength = 500)
     private String description;
 
-    @Schema(
-            description = "Icon associated with the tag (emoji or code)",
-            example = "🏢",
-            maxLength = 50
-    )
+    @Schema(description = "Icon associated with the tag (emoji or code)", example = "🏢", maxLength = 50)
     private String icon;
 
-    @Schema(
-            description = "Sort order for display",
-            example = "10",
-            minimum = "0",
-            requiredMode = Schema.RequiredMode.REQUIRED
-    )
+    @Schema(description = "Sort order for display", example = "10", minimum = "0", requiredMode = Schema.RequiredMode.REQUIRED)
     private Integer sortingOrder;
 
-    @Schema(
-            description = "ISO 4217 currency code (3 letters)",
-            example = "CHF",
-            minLength = 3,
-            maxLength = 3
-    )
+    @Schema(description = "ISO 4217 currency code (3 letters)", example = "CHF", minLength = 3, maxLength = 3)
     private String currencyCode;
 
-    @Schema(
-            description = "Whether the tag represents cumulative values",
-            example = "false"
-    )
+    @Schema(description = "Whether the tag represents cumulative values", example = "false")
     private Boolean isCumulative;
 
-    @Schema(
-            description = "Whether the tag is hidden from display",
-            example = "false"
-    )
+    @Schema(description = "Whether the tag is hidden from display", example = "false")
     private Boolean hidden;
 }

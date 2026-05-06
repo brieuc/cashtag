@@ -33,7 +33,7 @@ public class TagServiceImpl implements TagService {
 
     private final TagRepository tagRepository;
 
-    @Value("${app.uploads.path}")
+    @Value("${app.uploads.path:./tmp/uploads}")
     private String uploadsPath;
 
     private static final Set<String> ALLOWED_TYPES = Set.of("image/png", "image/jpeg", "image/webp", "image/svg+xml");

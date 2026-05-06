@@ -34,8 +34,10 @@ public class Tag {
     private Currency currency;
 
     @Column(name = "is_cumulative", nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean isCumulative;
+    @Builder.Default
+    private Boolean isCumulative = false;
 
     @Column(nullable = false, columnDefinition = "BOOLEAN DEFAULT FALSE")
-    private Boolean hidden;
+    @Builder.Default
+    private Boolean hidden = false;
 }

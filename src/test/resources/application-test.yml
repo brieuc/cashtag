@@ -3,4 +3,7 @@ spring:
   liquibase:
     enabled: false
   jpa:
-    hibernate.ddl-auto=: create-drop
+    hibernate.ddl-auto: create-drop
+app:
+  uploads:
+    path: ./tmp/uploads

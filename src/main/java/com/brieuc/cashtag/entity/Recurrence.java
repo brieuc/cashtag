@@ -38,7 +38,7 @@ public class Recurrence {
     private Currency currency;
 
     @Column(name = "start_date", nullable = false)
-    private LocalDate startDate;
+    private LocalDateTime startDate;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)

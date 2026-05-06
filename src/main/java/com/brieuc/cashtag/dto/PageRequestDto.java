@@ -12,28 +12,16 @@ import lombok.Setter;
 @Setter
 @Schema(description = "Pagination parameters for list queries")
 public class PageRequestDto {
-    @Schema(
-            description = "Page number (starts at 0)",
-            example = "0",
-            defaultValue = "0"
-    )
+    @Schema(description = "Page number (starts at 0)", example = "0", defaultValue = "0")
     @Min(0)
     @Max(Integer.MAX_VALUE)
     Integer page;
 
-    @Schema(
-            description = "Number of elements per page",
-            example = "20",
-            minimum = "1",
-            maximum = "1000"
-    )
+    @Schema(description = "Number of elements per page", example = "20", minimum = "1", maximum = "1000")
     @Min(1)
     @Max(1000)
     Integer size;
 
-    @Schema(
-            description = "Sort criteria (format: 'property:direction' where direction = asc|desc)",
-            example = "[\"accountingDate:desc\", \"title:asc\"]"
-    )
+    @Schema(description = "Sort criteria (format: 'property:direction' where direction = asc|desc)", example = "[\"accountingDate:desc\", \"title:asc\"]")
     List<String> sort;
 }

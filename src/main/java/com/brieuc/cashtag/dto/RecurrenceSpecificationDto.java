@@ -13,27 +13,15 @@ import java.util.Set;
 @Schema(description = "Filter criteria for searching recurrences")
 public class RecurrenceSpecificationDto {
 
-    @Schema(
-            description = "Start date filter (inclusive)",
-            example = "2024-01-01"
-    )
+    @Schema(description = "Start date filter (inclusive)", example = "2024-01-01")
     LocalDate startDate;
 
-    @Schema(
-            description = "End date filter (inclusive)",
-            example = "2026-12-31"
-    )
+    @Schema(description = "End date filter (inclusive)", example = "2026-12-31")
     LocalDate endDate;
 
-    @Schema(
-            description = "List of tag IDs to filter recurrences",
-            example = "[1, 2, 5]"
-    )
+    @Schema(description = "List of tag IDs to filter recurrences", example = "[1, 2, 5]")
     Set<Long> tagIds;
 
-    @Schema(
-            description = "Frequencies to filter recurrences",
-            example = "[\"MONTHLY\", \"YEARLY\"]"
-    )
+    @Schema(description = "Frequencies to filter recurrences", example = "[\"MONTHLY\", \"YEARLY\"]")
     Set<Frequency> frequencies;
 }
