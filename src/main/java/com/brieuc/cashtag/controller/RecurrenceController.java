@@ -1,15 +1,17 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.controller.api.RecurrenceApi;
+import com.brieuc.cashtag.dto.EntryDto;
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.RecurrenceDto;
 import com.brieuc.cashtag.dto.RecurrenceSpecificationDto;
-import com.brieuc.cashtag.dto.recurrence.SimulatedEntry;
 import com.brieuc.cashtag.entity.Recurrence;
+import com.brieuc.cashtag.mapper.EntryMapper;
 import com.brieuc.cashtag.mapper.PageRequestMapper;
 import com.brieuc.cashtag.mapper.RecurrenceMapper;
 import com.brieuc.cashtag.mapper.RecurrenceSpecificationMapper;
 import com.brieuc.cashtag.service.RecurrenceService;
+
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
@@ -33,22 +35,28 @@ public class RecurrenceController implements RecurrenceApi {
     private final PageRequestMapper pageRequestMapper;
     private final RecurrenceMapper recurrenceMapper;
     private final RecurrenceSpecificationMapper recurrenceSpecificationMapper;
+    private final EntryMapper entryMapper;
 
     @Override
     public ResponseEntity<PageImpl<RecurrenceDto>> getRecurrences(
             @ParameterObject RecurrenceSpecificationDto recurrenceSpecificationDto,
             @ParameterObject PageRequestDto pageRequestDto) {
         Specification<Recurrence> specification = recurrenceSpecificationMapper.toEntity(recurrenceSpecificationDto);
-        Page<RecurrenceDto> recurrences = recurrenceService.getRecurrences(specification, pageRequestMapper.toPageable(pageRequestDto))
+        Page<RecurrenceDto> recurrences = recurrenceService
+                .getRecurrences(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(recurrenceMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(recurrences.getContent(), recurrences.getPageable(), recurrences.getTotalElements()));
+        return ResponseEntity.ok(
+                new PageImpl<>(recurrences.getContent(), recurrences.getPageable(), recurrences.getTotalElements()));
     }
 
     @Override
-    public ResponseEntity<List<SimulatedEntry>> simulateEntries(
+    public ResponseEntity<List<EntryDto>> simulateEntries(
             @RequestParam LocalDate fromDate,
             @RequestParam LocalDate toDate) {
-        return ResponseEntity.ok(recurrenceService.simulateEntries(fromDate, toDate));
+        List<EntryDto> result = recurrenceService.simulateEntries(fromDate, toDate).stream()
+                .map(entryMapper::toDto)
+                .toList();
+        return ResponseEntity.ok(result);
     }
 
     @Override
@@ -63,7 +71,8 @@ public class RecurrenceController implements RecurrenceApi {
     }
 
     @Override
-    public ResponseEntity<RecurrenceDto> updateRecurrence(@PathVariable Long id, @RequestBody RecurrenceDto recurrenceDto) {
+    public ResponseEntity<RecurrenceDto> updateRecurrence(@PathVariable Long id,
+            @RequestBody RecurrenceDto recurrenceDto) {
         Recurrence updatedRecurrence = recurrenceService.update(recurrenceMapper.toEntity(recurrenceDto));
         return ResponseEntity.ok(recurrenceMapper.toDto(updatedRecurrence));
     }

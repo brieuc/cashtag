@@ -1,5 +1,7 @@
 package com.brieuc.cashtag.controller;
 
+import java.util.List;
+
 import com.brieuc.cashtag.controller.api.EntryApi;
 import com.brieuc.cashtag.dto.EntryDto;
 import com.brieuc.cashtag.dto.EntrySpecificationDto;
@@ -42,6 +44,13 @@ public class EntryController implements EntryApi {
     @Override
     public ResponseEntity<EntryDto> getEntryById(@PathVariable Long id) {
         return ResponseEntity.ok(entryMapper.tDto(entryService.getById(id)));
+    }
+
+    @Override
+    public ResponseEntity<List<EntryDto>> createBatch(@RequestBody List<EntryDto> entryDtos) {
+        List<Entry> entries = entryDtos.stream().map(entryMapper::toEntity).toList();
+        List<EntryDto> created = entryService.createBatch(entries).stream().map(entryMapper::tDto).toList();
+        return ResponseEntity.status(HttpStatus.CREATED).body(created);
     }
 
     @Override

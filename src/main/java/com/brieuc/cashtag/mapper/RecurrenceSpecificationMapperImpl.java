@@ -11,7 +11,7 @@ import jakarta.persistence.criteria.Subquery;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -27,7 +27,7 @@ public class RecurrenceSpecificationMapperImpl implements RecurrenceSpecificatio
                 .and(hasFrequencies(dto.getFrequencies()));
     }
 
-    public Specification<Recurrence> hasStartDateBetween(LocalDate startDate, LocalDate endDate) {
+    public Specification<Recurrence> hasStartDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
         return (root, query, cb) -> {
             if (startDate != null && endDate != null) {
                 return cb.and(

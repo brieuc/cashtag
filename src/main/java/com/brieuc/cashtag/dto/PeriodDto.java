@@ -27,7 +27,7 @@ public class PeriodDto {
     @Schema(description = "End date and time of the period", example = "2024-03-31T23:59:59", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime endDate;
 
-    @Schema(description = "ISO 4217 currency code (3 letters)", example = "CHF", minLength = 3, maxLength = 3)
+    @Schema(description = "ISO 4217 currency code (3 letters)", example = "CHF", minLength = 3, maxLength = 3, nullable = true)
     private String currencyCode;
 
     @Schema(description = "Whether the period is hidden from display", example = "false")

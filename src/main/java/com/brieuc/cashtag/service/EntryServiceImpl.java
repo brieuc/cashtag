@@ -1,5 +1,7 @@
 package com.brieuc.cashtag.service;
 
+import java.util.List;
+
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.repository.EntryRepository;
@@ -49,6 +51,11 @@ public class EntryServiceImpl implements EntryService {
     @Override
     public Entry create(@NotNull Entry entry) {
         return entryRepository.save(entry);
+    }
+
+    @Override
+    public List<Entry> createBatch(@NotNull List<Entry> entries) {
+        return entryRepository.saveAll(entries);
     }
 
     @Override

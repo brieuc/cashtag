@@ -1,16 +1,18 @@
 package com.brieuc.cashtag.service;
 
-import com.brieuc.cashtag.dto.recurrence.SimulatedEntry;
 import com.brieuc.cashtag.entity.Frequency;
 import com.brieuc.cashtag.entity.Recurrence;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.repository.RecurrenceRepository;
+import com.brieuc.cashtag.service.helper.SimulatedEntry;
+
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -28,7 +30,8 @@ public class RecurrenceServiceImpl implements RecurrenceService {
     private final RecurrenceRepository recurrenceRepository;
 
     @Override
-    public Page<Recurrence> getRecurrences(@NotNull Specification<Recurrence> specification, @NotNull Pageable pageable) {
+    public Page<Recurrence> getRecurrences(@NotNull Specification<Recurrence> specification,
+            @NotNull Pageable pageable) {
         return recurrenceRepository.findAll(specification, pageable);
     }
 
@@ -65,14 +68,17 @@ public class RecurrenceServiceImpl implements RecurrenceService {
     public List<SimulatedEntry> simulateEntries(LocalDate fromDate, LocalDate toDate) {
 
         ArrayList<SimulatedEntry> simulatedEntries = new ArrayList<>();
-        List<Recurrence> recurrences = recurrenceRepository.findAll().stream().filter(r -> r.getFrequency() != Frequency.NONE).toList();
-        for (Recurrence recurrence: recurrences) {
+        List<Recurrence> recurrences = recurrenceRepository.findAll().stream()
+                .filter(r -> r.getFrequency() != Frequency.NONE).toList();
+        for (Recurrence recurrence : recurrences) {
             Optional<LocalDateTime> computedAccountingDate = getIntervalDate(recurrence, fromDate, toDate);
             computedAccountingDate.ifPresent(date -> {
                 simulatedEntries.add(new SimulatedEntry(date, recurrence.getTitle(), recurrence.getDescription(),
-                        recurrence.getAmount(), recurrence.getCurrency().getCode(), new ArrayList<>(recurrence.getTags())));
+                        recurrence.getAmount(), recurrence.getCurrency().getCode(),
+                        new ArrayList<>(recurrence.getTags())));
             });
         }
+        simulatedEntries.sort(Comparator.comparing(SimulatedEntry::accountingDate, Comparator.reverseOrder()));
         return simulatedEntries;
     }
 
@@ -81,7 +87,8 @@ public class RecurrenceServiceImpl implements RecurrenceService {
      * @param initialAccountingDate
      * @param fromDate
      * @param toDate
-     * @return The date included in the interval or an empty optional if the computed accounting date exceed the interval end date
+     * @return The date included in the interval or an empty optional if the
+     *         computed accounting date exceed the interval end date
      */
     private Optional<LocalDateTime> getIntervalDate(Recurrence recurrence, LocalDate fromDate, LocalDate toDate) {
         if (recurrence.getFrequency() == Frequency.NONE)
@@ -103,5 +110,5 @@ public class RecurrenceServiceImpl implements RecurrenceService {
 
         return Optional.empty();
     }
-    
+
 }

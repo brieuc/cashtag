@@ -16,6 +16,7 @@ public interface EntryService {
       Page<Entry> getEntries(@NotNull Specification<Entry> specification, @NotNull Pageable pageable);
       Entry getById(@NotNull Long id);
       Entry create(@NotNull Entry entry);
+      List<Entry> createBatch(@NotNull List<Entry> entries);
       Entry update(@NotNull Entry entry);
       void delete(@NotNull Entry entry);
 }
