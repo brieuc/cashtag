@@ -16,6 +16,8 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @Tag(name = "Entries", description = "API de gestion des entrées financières")
 @RequestMapping(value = "/entries", produces = "application/json")
 public interface EntryApi {
@@ -36,6 +38,17 @@ public interface EntryApi {
     @GetMapping("/{id}")
     ResponseEntity<EntryDto> getEntryById(
             @Parameter(description = "ID de l'entrée à récupérer", required = true, example = "1") @PathVariable Long id);
+
+    @Operation(summary = "Créer plusieurs entrées en lot", description = "Crée plusieurs entrées financières en une seule transaction")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "Entrées créées avec succès",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = EntryDto.class))),
+            @ApiResponse(responseCode = "400", description = "Données invalides", content = @Content)
+    })
+    @RequestBody(description = "Liste des entrées à créer", required = true,
+            content = @Content(mediaType = "application/json"))
+    @PostMapping(value = "/batch", consumes = "application/json")
+    ResponseEntity<List<EntryDto>> createBatch(List<EntryDto> entryDtos);
 
     @Operation(summary = "Créer une nouvelle entrée", description = "Crée une nouvelle entrée financière avec les informations fournies")
     @ApiResponses(value = {

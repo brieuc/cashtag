@@ -1,4 +1,4 @@
-package com.brieuc.cashtag.dto.recurrence;
+package com.brieuc.cashtag.service.helper;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;

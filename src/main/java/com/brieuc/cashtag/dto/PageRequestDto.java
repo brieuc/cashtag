@@ -22,6 +22,6 @@ public class PageRequestDto {
     @Max(1000)
     Integer size;
 
-    @Schema(description = "Sort criteria (format: 'property:direction' where direction = asc|desc)", example = "[\"accountingDate:desc\", \"title:asc\"]")
+    @Schema(description = "Sort criteria (format: 'property:direction' where direction = asc|desc)", example = "[\"title:asc\"]")
     List<String> sort;
 }

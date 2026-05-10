@@ -1,9 +1,9 @@
 package com.brieuc.cashtag.service;
 
-import com.brieuc.cashtag.dto.recurrence.SimulatedEntry;
 import com.brieuc.cashtag.entity.Frequency;
 import com.brieuc.cashtag.entity.Recurrence;
 import com.brieuc.cashtag.entity.Tag;
+import com.brieuc.cashtag.service.helper.SimulatedEntry;
 
 import jakarta.validation.constraints.NotNull;
 

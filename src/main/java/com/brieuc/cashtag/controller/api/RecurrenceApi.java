@@ -1,11 +1,13 @@
 package com.brieuc.cashtag.controller.api;
 
+import com.brieuc.cashtag.dto.EntryDto;
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.RecurrenceDto;
 import com.brieuc.cashtag.dto.RecurrenceSpecificationDto;
-import com.brieuc.cashtag.dto.recurrence.SimulatedEntry;
+
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.parameters.RequestBody;
@@ -35,10 +37,10 @@ public interface RecurrenceApi {
             description = "Retourne les entrées qui seraient générées par les récurrences actives entre fromDate et toDate")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Entrées simulées",
-                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = SimulatedEntry.class)))
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = EntryDto.class))))
     })
     @GetMapping("/simulate")
-    ResponseEntity<List<SimulatedEntry>> simulateEntries(
+    ResponseEntity<List<EntryDto>> simulateEntries(
             @Parameter(description = "Date de début de la période (inclusive)", required = true, example = "2025-01-01")
             @RequestParam LocalDate fromDate,
             @Parameter(description = "Date de fin de la période (inclusive)", required = true, example = "2025-01-31")

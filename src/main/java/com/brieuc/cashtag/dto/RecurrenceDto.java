@@ -8,7 +8,6 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -37,8 +36,8 @@ public class RecurrenceDto {
     @Schema(description = "ISO 4217 currency code (3 letters)", example = "CHF", requiredMode = Schema.RequiredMode.REQUIRED, minLength = 3, maxLength = 3)
     private String currencyCode;
 
-    @Schema(description = "Start date of the recurrence", example = "2024-01-01", requiredMode = Schema.RequiredMode.REQUIRED)
-    private LocalDate startDate;
+    @Schema(description = "Start date of the recurrence", example = "2024-01-01T00:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
+    private LocalDateTime startDate;
 
     @Schema(description = "Recurrence frequency", example = "MONTHLY", requiredMode = Schema.RequiredMode.REQUIRED)
     private Frequency frequency;

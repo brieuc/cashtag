@@ -16,12 +16,12 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import com.brieuc.cashtag.dto.recurrence.SimulatedEntry;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Frequency;
 import com.brieuc.cashtag.entity.Recurrence;
 import com.brieuc.cashtag.repository.RecurrenceRepository;
 import com.brieuc.cashtag.service.RecurrenceServiceImpl;
+import com.brieuc.cashtag.service.helper.SimulatedEntry;
 
 @ExtendWith(MockitoExtension.class)
 public class RecurrenceServiceImplTest {

@@ -2,7 +2,6 @@ package com.brieuc.cashtag.mapper;
 
 
 import java.util.Comparator;
-import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.stereotype.Service;
@@ -12,6 +11,7 @@ import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.service.CurrencyService;
 import com.brieuc.cashtag.service.TagService;
+import com.brieuc.cashtag.service.helper.SimulatedEntry;
 
 import lombok.RequiredArgsConstructor;
 
@@ -56,5 +56,20 @@ public class EntryMapperImpl implements EntryMapper {
                                           .sorted(Comparator.comparing(TagDto::getSortingOrder, Comparator.nullsLast(Comparator.naturalOrder()))).toList())
                               .build();
             return entryDto;
+      }
+
+      @Override
+      public EntryDto toDto(SimulatedEntry simulatedEntry) {
+            return EntryDto.builder()
+                              .accountingDate(simulatedEntry.accountingDate())
+                              .title(simulatedEntry.title())
+                              .description(simulatedEntry.description())
+                              .amount(simulatedEntry.amount())
+                              .currencyCode(simulatedEntry.currencyCode())
+                              .tags(simulatedEntry.tags() == null ? null : simulatedEntry.tags().stream()
+                                          .map(tagMapper::toDto)
+                                          .sorted(Comparator.comparing(TagDto::getSortingOrder, Comparator.nullsLast(Comparator.naturalOrder())))
+                                          .toList())
+                              .build();
       }
 }
