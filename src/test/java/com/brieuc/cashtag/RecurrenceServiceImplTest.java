@@ -5,7 +5,6 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -32,8 +31,8 @@ public class RecurrenceServiceImplTest {
     @Mock
     private RecurrenceRepository recurrenceRepository;
 
-    private static final LocalDate FROM = LocalDate.of(2025, 1, 1);
-    private static final LocalDate TO = LocalDate.of(2025, 1, 31);
+    private static final LocalDateTime FROM = LocalDateTime.of(2025, 1, 1, 0, 0);
+    private static final LocalDateTime TO = LocalDateTime.of(2025, 1, 31, 23, 59, 59);
     private static final Currency CHF = new Currency("CHF", true);
 
     private Recurrence buildRecurrence(LocalDateTime startDate, Frequency frequency) {

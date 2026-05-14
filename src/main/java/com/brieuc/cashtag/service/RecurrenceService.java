@@ -7,7 +7,7 @@ import com.brieuc.cashtag.service.helper.SimulatedEntry;
 
 import jakarta.validation.constraints.NotNull;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 import org.springframework.data.domain.Page;
@@ -22,5 +22,5 @@ public interface RecurrenceService {
     Recurrence create(@NotNull Recurrence recurrence);
     Recurrence update(@NotNull Recurrence recurrence);
     void delete(@NotNull Recurrence recurrence);
-    List<SimulatedEntry> simulateEntries(LocalDate fromDate, LocalDate toDate);
+    List<SimulatedEntry> simulateEntries(LocalDateTime fromDate, LocalDateTime toDate);
 }
