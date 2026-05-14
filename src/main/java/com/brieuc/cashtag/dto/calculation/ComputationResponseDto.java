@@ -1,18 +1,18 @@
 package com.brieuc.cashtag.dto.calculation;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Map;
 
 import io.swagger.v3.oas.annotations.media.Schema;
 
 @Schema(description = "Result of aggregated amount calculation")
 public record ComputationResponseDto(
-      @Schema(description = "Start date of the calculated period", example = "2024-01-01")
-      LocalDate startDate,
+      @Schema(description = "Start date of the calculated period", example = "2024-01-01T00:00:00")
+      LocalDateTime startDate,
 
-      @Schema(description = "End date of the calculated period", example = "2024-12-31")
-      LocalDate endDate,
+      @Schema(description = "End date of the calculated period", example = "2024-12-31T23:59:59")
+      LocalDateTime endDate,
 
       @Schema(description = "Total amount converted to the target currency", example = "15750.50")
       BigDecimal totalAmount,

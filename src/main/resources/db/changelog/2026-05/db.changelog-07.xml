@@ -11,4 +11,18 @@
                         newDataType="DATETIME"/>
     </changeSet>
 
+    <!-- Change entry.accounting_date from TIMESTAMP to DATETIME to avoid timezone conversion issues -->
+    <changeSet id="13" author="Brieuc">
+        <modifyDataType tableName="entry"
+                        columnName="accounting_date"
+                        newDataType="DATETIME"/>
+    </changeSet>
+
+    <!-- Change recurrency.modification_date from TIMESTAMP to DATETIME to avoid timezone conversion issues -->
+    <changeSet id="14" author="Brieuc">
+        <modifyDataType tableName="recurrency"
+                        columnName="modification_date"
+                        newDataType="DATETIME"/>
+    </changeSet>
+
 </databaseChangeLog>

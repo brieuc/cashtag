@@ -9,7 +9,6 @@ import com.brieuc.cashtag.service.helper.SimulatedEntry;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -65,7 +64,7 @@ public class RecurrenceServiceImpl implements RecurrenceService {
     }
 
     @Override
-    public List<SimulatedEntry> simulateEntries(LocalDate fromDate, LocalDate toDate) {
+    public List<SimulatedEntry> simulateEntries(LocalDateTime fromDate, LocalDateTime toDate) {
 
         ArrayList<SimulatedEntry> simulatedEntries = new ArrayList<>();
         List<Recurrence> recurrences = recurrenceRepository.findAll().stream()
@@ -90,12 +89,12 @@ public class RecurrenceServiceImpl implements RecurrenceService {
      * @return The date included in the interval or an empty optional if the
      *         computed accounting date exceed the interval end date
      */
-    private Optional<LocalDateTime> getIntervalDate(Recurrence recurrence, LocalDate fromDate, LocalDate toDate) {
+    private Optional<LocalDateTime> getIntervalDate(Recurrence recurrence, LocalDateTime fromDate, LocalDateTime toDate) {
         if (recurrence.getFrequency() == Frequency.NONE)
             return Optional.empty();
         LocalDateTime currentDate = recurrence.getStartDate();
         do {
-            if (!currentDate.toLocalDate().isBefore(fromDate) && !currentDate.toLocalDate().isAfter(toDate)) {
+            if (!currentDate.isBefore(fromDate) && !currentDate.isAfter(toDate)) {
                 return Optional.of(currentDate);
             }
             currentDate = switch (recurrence.getFrequency()) {
@@ -106,7 +105,7 @@ public class RecurrenceServiceImpl implements RecurrenceService {
                 case YEARLY -> currentDate.plusYears(1);
                 default -> throw new RuntimeException("unsupported frequency");
             };
-        } while (!currentDate.toLocalDate().isAfter(toDate));
+        } while (!currentDate.isAfter(toDate));
 
         return Optional.empty();
     }

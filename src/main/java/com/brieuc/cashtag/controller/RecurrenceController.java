@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @RestController
@@ -51,8 +51,8 @@ public class RecurrenceController implements RecurrenceApi {
 
     @Override
     public ResponseEntity<List<EntryDto>> simulateEntries(
-            @RequestParam LocalDate fromDate,
-            @RequestParam LocalDate toDate) {
+            @RequestParam LocalDateTime fromDate,
+            @RequestParam LocalDateTime toDate) {
         List<EntryDto> result = recurrenceService.simulateEntries(fromDate, toDate).stream()
                 .map(entryMapper::toDto)
                 .toList();

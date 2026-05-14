@@ -2,7 +2,7 @@ package com.brieuc.cashtag.service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -41,7 +41,7 @@ public class ComputationServiceImpl implements ComputationService {
 
       @Override
       public ComputationResponseDto computeSum(ComputationRequestDto computationRequestDto) {
-            LocalDate fromDate = computationRequestDto.startDate();
+            LocalDateTime fromDate = computationRequestDto.startDate();
             Set<TagDto> tags = computationRequestDto.tags();
             // There is a specific case when there is only one tag and it is cumulative, those kind of tags
             // keep the balance along the way then we need to compute the entries from the beginning.
@@ -54,6 +54,7 @@ public class ComputationServiceImpl implements ComputationService {
             EntrySpecificationDto entrySpecificationDto = EntrySpecificationDto.builder()
                                                                   .startDate(fromDate)
                                                                   .endDate(computationRequestDto.endDate())
+                                                                  .searchText(computationRequestDto.searchText())
                                                                   .build();
 
             // We need to manage the tags separately since an empty collection doesn't work for the

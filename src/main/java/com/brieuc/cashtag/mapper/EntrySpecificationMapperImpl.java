@@ -1,6 +1,5 @@
 package com.brieuc.cashtag.mapper;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -26,30 +25,37 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
 
       @Override
       public Specification<Entry> toEntity(EntrySpecificationDto entrySpecificationDto) {
-            return hasDateBetween(entrySpecificationDto.getStartDate(),
-                                    entrySpecificationDto.getEndDate())
-                        .and(hasAllTags(entrySpecificationDto.getTagIds()));
+            return hasDateBetween(entrySpecificationDto.getStartDate(), entrySpecificationDto.getEndDate())
+                        .and(hasAllTags(entrySpecificationDto.getTagIds()))
+                        .and(hasText(entrySpecificationDto.getSearchText()));
       }
 
-      /*
-      public static Specification<Entry> hasDateBetween(LocalDateTime start, LocalDateTime end) {
-            return (root, query, cb) -> cb.between(root.get("accountingDate"), start, end);
-      }
-      */
+      private Specification<Entry> hasText(String searchText) {
+            if (searchText == null || searchText.isBlank())
+                  return null;
 
-      public Specification<Entry> hasDateBetween(LocalDate startDate, LocalDate endDate) {
+            return (root, query, cb) -> {
+                  String pattern = "%" + searchText.toLowerCase() + "%";
+                  return cb.or(
+                        cb.like(cb.lower(root.get("title")), pattern),
+                        cb.like(cb.lower(root.get("description")), pattern)
+                  );
+            };
+      }
+
+      public Specification<Entry> hasDateBetween(LocalDateTime startDate, LocalDateTime endDate) {
             return (root, query, cb) -> {
                   if (startDate != null && endDate != null) {
                         return cb.and(
-                        cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate.atStartOfDay()),
-                        cb.lessThan(root.get("accountingDate"), endDate.plusDays(1).atStartOfDay())
+                              cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate),
+                              cb.lessThanOrEqualTo(root.get("accountingDate"), endDate)
                         );
                   } else if (startDate != null) {
-                        return cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate.atStartOfDay());
+                        return cb.greaterThanOrEqualTo(root.get("accountingDate"), startDate);
                   } else if (endDate != null) {
-                        return cb.lessThan(root.get("accountingDate"), endDate.plusDays(1).atStartOfDay());
+                        return cb.lessThanOrEqualTo(root.get("accountingDate"), endDate);
                   } else {
-                        return cb.conjunction(); // Retourne toujours vrai si les deux sont null
+                        return cb.conjunction();
                   }
             };
       }

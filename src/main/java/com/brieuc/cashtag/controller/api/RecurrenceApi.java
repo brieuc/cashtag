@@ -19,7 +19,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 @Tag(name = "Recurrences", description = "API de gestion des transactions récurrentes")
@@ -41,10 +41,10 @@ public interface RecurrenceApi {
     })
     @GetMapping("/simulate")
     ResponseEntity<List<EntryDto>> simulateEntries(
-            @Parameter(description = "Date de début de la période (inclusive)", required = true, example = "2025-01-01")
-            @RequestParam LocalDate fromDate,
-            @Parameter(description = "Date de fin de la période (inclusive)", required = true, example = "2025-01-31")
-            @RequestParam LocalDate toDate);
+            @Parameter(description = "Date de début de la période (inclusive)", required = true, example = "2025-01-01T00:00:00")
+            @RequestParam LocalDateTime fromDate,
+            @Parameter(description = "Date de fin de la période (inclusive)", required = true, example = "2025-01-31T23:59:59")
+            @RequestParam LocalDateTime toDate);
 
     @Operation(summary = "Récupérer une récurrence par son ID",
             description = "Retourne une récurrence spécifique identifiée par son ID")
