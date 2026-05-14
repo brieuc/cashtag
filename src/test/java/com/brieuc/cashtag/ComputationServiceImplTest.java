@@ -1,14 +1,11 @@
 package com.brieuc.cashtag;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNull;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.description;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -76,9 +73,9 @@ public class ComputationServiceImplTest {
             when(entryService.getEntries(any(), any())).thenReturn(page);
 
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.of(2020, 12, 31),
-                        null, "CHF");
+                        LocalDateTime.of(2020, 1, 1, 0, 0),
+                        LocalDateTime.of(2020, 12, 31, 23, 59, 59),
+                        null, null, "CHF");
 
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
             assertEquals(1, computationResponseDto.numberOfEntries());
@@ -110,9 +107,9 @@ public class ComputationServiceImplTest {
 
             // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.of(2020, 12, 31),
-                        null, "CHF");
+                        LocalDateTime.of(2020, 1, 1, 0, 0),
+                        LocalDateTime.of(2020, 12, 31, 23, 59, 59),
+                        null, null, "CHF");
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
             // Assert
@@ -146,9 +143,9 @@ public class ComputationServiceImplTest {
 
             // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.of(2020, 12, 31),
-                        null, "CHF");
+                        LocalDateTime.of(2020, 1, 1, 0, 0),
+                        LocalDateTime.of(2020, 12, 31, 23, 59, 59),
+                        null, null, "CHF");
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
             // Assert
@@ -181,9 +178,9 @@ public class ComputationServiceImplTest {
 
             // Act & Assert
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.of(2020, 12, 31),
-                        null, "USD");
+                        LocalDateTime.of(2020, 1, 1, 0, 0),
+                        LocalDateTime.of(2020, 12, 31, 23, 59, 59),
+                        null, null, "USD");
             assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(computationRequestDto));
 
       }
@@ -214,9 +211,9 @@ public class ComputationServiceImplTest {
 
             // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
-                        LocalDate.of(2020, 1, 1),
-                        LocalDate.of(2020, 12, 31),
-                        null, "EUR");
+                        LocalDateTime.of(2020, 1, 1, 0, 0),
+                        LocalDateTime.of(2020, 12, 31, 23, 59, 59),
+                        null, null, "EUR");
 
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
