@@ -20,6 +20,7 @@ import org.springframework.validation.annotation.Validated;
 public class EntryServiceImpl implements EntryService {
 
     private final EntryRepository entryRepository;
+    private final TagGroupService tagGroupService;
 
     @Override
     public Page<Entry> getEntries(@NotNull Specification<Entry> specification, @NotNull Pageable pageable) {
@@ -31,25 +32,10 @@ public class EntryServiceImpl implements EntryService {
     public Entry getById(@NotNull Long id) {
         return entryRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("no entry id " + id + " was found"));
     }
-
-    /*
-    @Override
-    public List<Entry> getByDateRange(LocalDate startDate, LocalDate endDate) {
-        return entryRepository.findByAccountingDateBetween(startDate, endDate);
-    }
-
-    @Override
-    public List<Entry> getByTag(Long tagId) {
-        return entryRepository.findByTagId(tagId);
-    }
-
-    public List<Entry> getByCurrency(String currencyCode) {
-        return entryRepository.findByCurrencyCode(currencyCode);
-    }
-    */
-
+    
     @Override
     public Entry create(@NotNull Entry entry) {
+        tagGroupService.recordTags(entry.getTags(), entry.getTitle());
         return entryRepository.save(entry);
     }
 
@@ -67,6 +53,9 @@ public class EntryServiceImpl implements EntryService {
         entry.setAmount(detachedEntry.getAmount());
         entry.setCurrency(detachedEntry.getCurrency());
         entry.setTags(detachedEntry.getTags());
+
+        tagGroupService.recordTags(entry.getTags(), entry.getTitle());
+
         return entryRepository.save(entry);
     }
 
