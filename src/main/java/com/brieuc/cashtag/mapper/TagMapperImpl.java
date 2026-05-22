@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import com.brieuc.cashtag.dto.TagDto;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.service.CurrencyService;
+import com.brieuc.cashtag.service.TagImageService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -13,13 +14,13 @@ import lombok.RequiredArgsConstructor;
 public class TagMapperImpl implements TagMapper {
 
       private final CurrencyService currencyService;
+      private final TagImageService tagImageService;
 
       @Override
       public Tag toEntity(TagDto tagDto) {
             Tag tag = Tag.builder()
                   .id(tagDto.getId())
                   .description(tagDto.getDescription())
-                  .icon(tagDto.getIcon())
                   .title(tagDto.getTitle())
                   .sortingOrder(tagDto.getSortingOrder())
                   .currency(tagDto.getCurrencyCode() != null ? currencyService.getCurrencyByCode(tagDto.getCurrencyCode()) : null)
@@ -35,7 +36,7 @@ public class TagMapperImpl implements TagMapper {
                   .id(tag.getId())
                   .title(tag.getTitle())
                   .description(tag.getDescription())
-                  .icon(tag.getIcon())
+                  .icon(tagImageService.getTagImage(tag) != null ? tagImageService.getTagImage(tag).getImagePath() : null)
                   .sortingOrder(tag.getSortingOrder())
                   .currencyCode(tag.getCurrency() != null ? tag.getCurrency().getCode() : null)
                   .isCumulative(tag.getIsCumulative())
