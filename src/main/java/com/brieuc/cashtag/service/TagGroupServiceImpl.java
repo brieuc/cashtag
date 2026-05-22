@@ -1,5 +1,6 @@
 package com.brieuc.cashtag.service;
 
+import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.entity.TagGroup;
 import com.brieuc.cashtag.entity.TagGroupTitleSuggestion;
@@ -8,7 +9,6 @@ import com.brieuc.cashtag.repository.TagGroupRepository;
 import com.brieuc.cashtag.repository.TagGroupTitleSuggestionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
 import org.springframework.data.domain.Sort;
 import org.springframework.data.jpa.domain.Specification;
 
@@ -61,7 +61,7 @@ public class TagGroupServiceImpl implements TagGroupService {
         return tagGroupRepository.save(tagGroup);
     }
 
-    private void resolveTitleSuggestion(TagGroup tagGroup, String title, LocalDateTime now) {
+    private TagGroupTitleSuggestion resolveTitleSuggestion(TagGroup tagGroup, String title, LocalDateTime now) {
         TagGroupTitleSuggestion suggestion = titleSuggestionRepository.findByTagGroupAndTitle(tagGroup, title)
                 .map(s -> {
                     s.setUsageCount(s.getUsageCount() + 1);
@@ -75,6 +75,13 @@ public class TagGroupServiceImpl implements TagGroupService {
                         .lastUsed(now)
                         .build());
 
-        titleSuggestionRepository.save(suggestion);
+        return titleSuggestionRepository.save(suggestion);
+    }
+
+    @Override
+    public void resetTagGroupsAndTitleSuggestions(List<Entry> entries) {
+        for (Entry entry : entries) {
+            recordTags(entry.getTags(), entry.getTitle());
+        }
     }
 }

@@ -1,7 +1,9 @@
 package com.brieuc.cashtag.service;
 
 import com.brieuc.cashtag.entity.Tag;
+import com.brieuc.cashtag.entity.TagImage;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
+import com.brieuc.cashtag.repository.TagImageRepository;
 import com.brieuc.cashtag.repository.TagRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -31,7 +33,9 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class TagServiceImpl implements TagService {
 
+    private final TagImageRepository tagImageRepository;
     private final TagRepository tagRepository;
+    private final TagImageService tagImageService;
 
     @Value("${app.uploads.path:./tmp/uploads}")
     private String uploadsPath;
@@ -67,7 +71,7 @@ public class TagServiceImpl implements TagService {
         Tag tag = getById(detachedTag.getId());
         tag.setTitle(detachedTag.getTitle());
         tag.setDescription(detachedTag.getDescription());
-        tag.setIcon(detachedTag.getIcon());
+        //tag.setIcon(detachedTag.getIcon());
         tag.setSortingOrder(detachedTag.getSortingOrder());
         tag.setIsCumulative(detachedTag.getIsCumulative());
         tag.setHidden(detachedTag.getHidden());
@@ -106,14 +110,22 @@ public class TagServiceImpl implements TagService {
         }
 
         // Delete former icon file
-        if (tag.getIcon() != null) {
+        TagImage tagImage = tagImageService.getTagImage(tag);
+        if (tagImageService.getTagImage(tag) != null) {
             try {
-                Files.deleteIfExists(Paths.get(uploadsPath, tag.getIcon()));
+                Files.deleteIfExists(Paths.get(uploadsPath, tagImage.getImagePath()));
             } catch (IOException ignored) {}
+            tagImage.setImagePath("tags/" + filename);
+            tagImageRepository.save(tagImage);
         }
-
-        tag.setIcon("tags/" + filename);
-        return tagRepository.save(tag);
+        else {
+            TagImage newTagImage = TagImage.builder()
+                .imagePath("tags/" + filename)
+                .tag(tag)
+                .build();
+            tagImageRepository.save(newTagImage);
+        }
+        return tag;
     }
 
     private void resizeImage(MultipartFile file, Path targetPath) throws IOException {

@@ -23,8 +23,6 @@ public class Tag {
 
     @Column(columnDefinition = "TEXT")
     private String description;
-
-    private String icon;
     
     @Column(name = "sorting_order")
     private Integer sortingOrder;
