@@ -5,6 +5,8 @@ services:
     image: cashtag:latest
     container_name: cashtag
     restart: always
+    volumes:
+      - /var/app/uploads/cashtag:/var/app/uploads/cashtag
     networks:
       - web
     environment:
