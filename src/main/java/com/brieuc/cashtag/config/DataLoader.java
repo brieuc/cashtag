@@ -68,12 +68,13 @@ public class DataLoader implements ApplicationRunner {
         if (tagGroups.isEmpty()) {
                 
                 EntrySpecificationDto entrySpecificationDto = EntrySpecificationDto.builder()
-                                                                  .startDate(LocalDateTime.of(2025, 1, 1, 0, 0))
-                                                                  .endDate(LocalDateTime.of(2026, 12, 31, 0, 0))
+                                                                  .startDate(LocalDateTime.of(2026, 2, 1, 0, 0))
+                                                                  .endDate(LocalDateTime.of(2026, 2, 28, 0, 0))
                                                                   .build();                                                           
 
                 Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
                 List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
+                int a = tagGroups.size();
                 tagGroupService.resetTagGroupsAndTitleSuggestions(entries);
         }
                  

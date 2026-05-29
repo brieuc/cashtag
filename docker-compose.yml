@@ -33,6 +33,8 @@ services:
     environment:
       MARIADB_ROOT_PASSWORD: BrieucGorin
       MARIADB_DATABASE: cashtagdb
+      MARIADB_CHARACTER_SET_SERVER: utf8mb4
+      MARIADB_COLLATION_SERVER: utf8mb4_unicode_ci
     volumes:
       - /home/debian/var-lib-mysql/:/var/lib/mysql
 
