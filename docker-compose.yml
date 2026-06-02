@@ -28,7 +28,7 @@ services:
 
   db:
     image: mariadb:10.6
-    container_name: cashtag_db
+    container_name: mariadb_cashtagdb
     networks:
       - web
     restart: always
