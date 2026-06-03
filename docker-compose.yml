@@ -13,8 +13,6 @@ services:
       - SPRING_DATASOURCE_URL=jdbc:mariadb_container://db:3306/cashtagdb
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=BrieucGorin
-    depends_on:
-      - db
       
   frontend:
     image: cashvue:latest
