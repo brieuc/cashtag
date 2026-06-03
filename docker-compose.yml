@@ -10,8 +10,7 @@ services:
     networks:
       - web
     environment:
-      - SPRING_PROFILES_ACTIVE=prod
-      - SPRING_DATASOURCE_URL=jdbc:mariadb://db:3306/cashtagdb
+      - SPRING_DATASOURCE_URL=jdbc:mariadb_container://db:3306/cashtagdb
       - SPRING_DATASOURCE_USERNAME=root
       - SPRING_DATASOURCE_PASSWORD=BrieucGorin
     depends_on:
@@ -25,20 +24,6 @@ services:
       - web
     depends_on:
       - backend
-
-  db:
-    image: mariadb:10.6
-    container_name: mariadb_cashtagdb
-    networks:
-      - web
-    restart: always
-    environment:
-      MARIADB_ROOT_PASSWORD: BrieucGorin
-      MARIADB_DATABASE: cashtagdb
-      MARIADB_CHARACTER_SET_SERVER: utf8mb4
-      MARIADB_COLLATION_SERVER: utf8mb4_unicode_ci
-    volumes:
-      - /home/debian/var-lib-mysql/:/var/lib/mysql
 
 networks:
   web:
