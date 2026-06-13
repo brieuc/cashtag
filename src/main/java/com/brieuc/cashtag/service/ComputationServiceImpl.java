@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import org.springframework.data.domain.Pageable;
@@ -55,7 +56,7 @@ public class ComputationServiceImpl implements ComputationService {
                                                                   .startDate(fromDate)
                                                                   .endDate(computationRequestDto.endDate())
                                                                   .searchText(computationRequestDto.searchText())
-                                                                  .currencyCodes(Set.of(computationRequestDto.targetCurrencyCode()))
+                                                                  .currencyCodes(computationRequestDto.currencies().stream().map(c -> c.getCode()).collect(Collectors.toSet()))
                                                                   .build();
 
             // We need to manage the tags separately since an empty collection doesn't work for the

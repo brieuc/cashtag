@@ -3,6 +3,7 @@ package com.brieuc.cashtag.dto.calculation;
 import java.time.LocalDateTime;
 import java.util.Set;
 
+import com.brieuc.cashtag.dto.CurrencyDto;
 import com.brieuc.cashtag.dto.TagDto;
 import io.swagger.v3.oas.annotations.media.Schema;
 
@@ -16,6 +17,9 @@ public record ComputationRequestDto(
 
       @Schema(description = "List of tags to filter entries in the calculation", example = "[{\"id\": 1, \"title\": \"Office\"}]")
       Set<TagDto> tags,
+
+      @Schema(description = "list of currencies to filter entries in the calculation")
+      Set<CurrencyDto> currencies,
 
       @Schema(description = "Search text")
       String searchText,
