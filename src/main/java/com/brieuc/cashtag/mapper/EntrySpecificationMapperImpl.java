@@ -27,6 +27,7 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
       public Specification<Entry> toEntity(EntrySpecificationDto entrySpecificationDto) {
             return hasDateBetween(entrySpecificationDto.getStartDate(), entrySpecificationDto.getEndDate())
                         .and(hasAllTags(entrySpecificationDto.getTagIds()))
+                        .and(hasCurrencyCodes(entrySpecificationDto.getCurrencyCodes()))
                         .and(hasText(entrySpecificationDto.getSearchText()));
       }
 
@@ -58,6 +59,13 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
                         return cb.conjunction();
                   }
             };
+      }
+
+      private Specification<Entry> hasCurrencyCodes(Set<String> currencyCodes) {
+            if (Objects.isNull(currencyCodes) || currencyCodes.isEmpty())
+                  return null;
+
+            return (root, query, cb) -> root.get("currency").get("code").in(currencyCodes);
       }
 
       public static Specification<Entry> hasAllTags(Set<Long> tagIds) {
