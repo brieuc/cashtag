@@ -55,6 +55,7 @@ public class ComputationServiceImpl implements ComputationService {
                                                                   .startDate(fromDate)
                                                                   .endDate(computationRequestDto.endDate())
                                                                   .searchText(computationRequestDto.searchText())
+                                                                  .currencyCodes(Set.of(computationRequestDto.targetCurrencyCode()))
                                                                   .build();
 
             // We need to manage the tags separately since an empty collection doesn't work for the
