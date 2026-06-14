@@ -75,7 +75,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, "CHF");
+                        null, null, null, "CHF");
 
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
             assertEquals(1, computationResponseDto.numberOfEntries());
@@ -109,7 +109,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, "CHF");
+                        null, null, null, "CHF");
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
             // Assert
@@ -145,7 +145,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, "CHF");
+                        null, null, null, "CHF");
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
             // Assert
@@ -180,7 +180,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, "USD");
+                        null, null, null, "USD");
             assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(computationRequestDto));
 
       }
@@ -213,7 +213,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, "EUR");
+                        null, null, null, "EUR");
 
             ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
 
