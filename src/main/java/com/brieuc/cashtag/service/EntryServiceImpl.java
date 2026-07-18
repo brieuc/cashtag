@@ -21,12 +21,12 @@ public class EntryServiceImpl implements EntryService {
 
     private final EntryRepository entryRepository;
     private final TagGroupService tagGroupService;
+    private final ComputationService computationService;
 
     @Override
     public Page<Entry> getEntries(@NotNull Specification<Entry> specification, @NotNull Pageable pageable) {
         return entryRepository.findAll(specification, pageable);
     }
-
 
     @Override
     public Entry getById(@NotNull Long id) {

@@ -74,7 +74,6 @@ public class DataLoader implements ApplicationRunner {
 
                 Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
                 List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-                int a = tagGroups.size();
                 tagGroupService.resetTagGroupsAndTitleSuggestions(entries);
         }
                  

@@ -16,6 +16,7 @@ import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -38,6 +39,7 @@ public class EntryController implements EntryApi {
         Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
         Page<EntryDto> entries = entryService.getEntries(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(entryMapper::tDto);
+
         return ResponseEntity.ok(new PageImpl<>(entries.getContent(), entries.getPageable(), entries.getTotalElements()));
     }
 
