@@ -7,11 +7,14 @@ import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.entity.TagGroup;
 import com.brieuc.cashtag.entity.TagGroupTitleSuggestion;
+import com.brieuc.cashtag.entity.user.Role;
+import com.brieuc.cashtag.entity.user.User;
 import com.brieuc.cashtag.mapper.EntrySpecificationMapper;
 import com.brieuc.cashtag.repository.CurrencyRepository;
 import com.brieuc.cashtag.repository.EntryRepository;
 import com.brieuc.cashtag.repository.RateRepository;
 import com.brieuc.cashtag.repository.TagRepository;
+import com.brieuc.cashtag.repository.UserRepository;
 import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.TagGroupService;
 
@@ -23,6 +26,7 @@ import org.springframework.boot.ApplicationRunner;
 import org.springframework.boot.info.BuildProperties;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -39,6 +43,8 @@ import java.util.stream.Collectors;
 public class DataLoader implements ApplicationRunner {
         private final TagGroupServiceImpl tagGroupServiceImpl;
 
+        private final UserRepository userRepository;
+
         public String getVersion() {
                 return buildProperties.getVersion();
         }
@@ -51,6 +57,7 @@ public class DataLoader implements ApplicationRunner {
     private final TagGroupService tagGroupService;
     private final EntryService entryService;
     private final EntrySpecificationMapper entrySpecificationMapper;
+    private final PasswordEncoder passwordEncoder;
 
     @Override
     @Transactional
@@ -62,8 +69,6 @@ public class DataLoader implements ApplicationRunner {
                                 .build();
                 currencyRepository.save(refCurrency);
          */
-
-
         List<TagGroup> tagGroups = tagGroupService.getTagGroups(Specification.unrestricted());
         if (tagGroups.isEmpty()) {
                 
@@ -74,7 +79,6 @@ public class DataLoader implements ApplicationRunner {
 
                 Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
                 List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-                int a = tagGroups.size();
                 tagGroupService.resetTagGroupsAndTitleSuggestions(entries);
         }
                  
