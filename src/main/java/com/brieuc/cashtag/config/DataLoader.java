@@ -6,19 +6,14 @@ import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.entity.TagGroup;
-import com.brieuc.cashtag.entity.TagGroupTitleSuggestion;
-import com.brieuc.cashtag.entity.user.Role;
-import com.brieuc.cashtag.entity.user.User;
 import com.brieuc.cashtag.mapper.EntrySpecificationMapper;
 import com.brieuc.cashtag.repository.CurrencyRepository;
 import com.brieuc.cashtag.repository.EntryRepository;
 import com.brieuc.cashtag.repository.RateRepository;
 import com.brieuc.cashtag.repository.TagRepository;
-import com.brieuc.cashtag.repository.UserRepository;
 import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.TagGroupService;
 
-import com.brieuc.cashtag.service.TagGroupServiceImpl;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.ApplicationArguments;
@@ -41,9 +36,6 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 @Slf4j
 public class DataLoader implements ApplicationRunner {
-        private final TagGroupServiceImpl tagGroupServiceImpl;
-
-        private final UserRepository userRepository;
 
         public String getVersion() {
                 return buildProperties.getVersion();

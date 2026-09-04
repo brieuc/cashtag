@@ -1,6 +1,5 @@
 package com.brieuc.cashtag.controller.api;
 
-import com.brieuc.cashtag.controller.ComputationProperty;
 import com.brieuc.cashtag.dto.EntryDto;
 import com.brieuc.cashtag.dto.EntrySpecificationDto;
 import com.brieuc.cashtag.dto.PageRequestDto;
