@@ -69,15 +69,17 @@ public class ComputationServiceImplTest {
                   .currency(new Currency("CHF", true))
                   .build();
 
-            Page<Entry> page = new PageImpl<>(List.of(entry));
-            when(entryService.getEntries(any(), any())).thenReturn(page);
+            //Page<Entry> page = new PageImpl<>(List.of(entry));
+            //when(entryService.getEntries(any(), any())).thenReturn(page);
 
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
 
-            ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
+                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
+
             assertEquals(1, computationResponseDto.numberOfEntries());
             assertEquals(1000.1, computationResponseDto.totalAmount().doubleValue());
       }
@@ -102,15 +104,17 @@ public class ComputationServiceImplTest {
                   .currency(new Currency("CHF", true))
                   .build();
 
-            Page<Entry> page = new PageImpl<>(List.of(entry));
-            when(entryService.getEntries(any(), any())).thenReturn(page);
+            //Page<Entry> page = new PageImpl<>(List.of(entry));
+            //when(entryService.getEntries(any(), any())).thenReturn(page);
 
             // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
-            ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+
+            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
+                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
 
             // Assert
             assertEquals(computationRequestDto.targetCurrencyCode(), computationResponseDto.targetCurrencyCode());
@@ -134,8 +138,8 @@ public class ComputationServiceImplTest {
             .currency(new Currency("EUR", false))
             .build();
 
-            Page<Entry> page = new PageImpl<>(List.of(entry));
-            when(entryService.getEntries(any(), any())).thenReturn(page);
+            //Page<Entry> page = new PageImpl<>(List.of(entry));
+            //when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
             when(rateService.getRateByCurrenciesAndDate(any(), any(), any()))
                   .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
@@ -146,7 +150,8 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
-            ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
+                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
 
             // Assert
             assertEquals(1000 / 0.5, computationResponseDto.totalAmount().doubleValue());
@@ -172,8 +177,8 @@ public class ComputationServiceImplTest {
             .currency(new Currency("EUR", false))
             .build();
 
-            Page<Entry> page = new PageImpl<>(List.of(entry));
-            when(entryService.getEntries(any(), any())).thenReturn(page);
+            //Page<Entry> page = new PageImpl<>(List.of(entry));
+            //when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
 
             // Act & Assert
@@ -181,7 +186,8 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "USD");
-            assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(computationRequestDto));
+            assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
+                                                      computationRequestDto.startDate(), computationRequestDto.endDate()));
 
       }
 
@@ -203,8 +209,8 @@ public class ComputationServiceImplTest {
             .currency(new Currency("CHF", false))
             .build();
 
-            Page<Entry> page = new PageImpl<>(List.of(entry));
-            when(entryService.getEntries(any(), any())).thenReturn(page);
+            //Page<Entry> page = new PageImpl<>(List.of(entry));
+            //when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
             when(rateService.getRateByCurrenciesAndDate(any(), any(), any()))
                   .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
@@ -215,7 +221,8 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "EUR");
 
-            ComputationResponseDto computationResponseDto = computationService.computeSum(computationRequestDto);
+            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
+                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
 
             // Assert
             assertEquals(1000 / (1 / 0.5), computationResponseDto.totalAmount().doubleValue());
