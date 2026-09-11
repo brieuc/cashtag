@@ -61,7 +61,7 @@ public class DataLoader implements ApplicationRunner {
                                 .build();
                 currencyRepository.save(refCurrency);
          */
-        List<TagGroup> tagGroups = tagGroupService.getTagGroups(Specification.unrestricted());
+        List<TagGroup> tagGroups = tagGroupService.getTagGroups(List.of());
         if (tagGroups.isEmpty()) {
                 
                 EntrySpecificationDto entrySpecificationDto = EntrySpecificationDto.builder()
