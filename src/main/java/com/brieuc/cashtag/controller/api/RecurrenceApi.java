@@ -15,7 +15,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -29,7 +29,7 @@ public interface RecurrenceApi {
     @Operation(summary = "Récupérer toutes les récurrences",
             description = "Retourne une liste paginée de récurrences filtrées selon les critères fournis")
     @GetMapping
-    ResponseEntity<PageImpl<RecurrenceDto>> getRecurrences(
+    ResponseEntity<PagedModel<RecurrenceDto>> getRecurrences(
             @Parameter(description = "Critères de filtrage des récurrences") @ParameterObject RecurrenceSpecificationDto recurrenceSpecificationDto,
             @Parameter(description = "Paramètres de pagination (page, size, sort)") @ParameterObject PageRequestDto pageRequestDto);
 

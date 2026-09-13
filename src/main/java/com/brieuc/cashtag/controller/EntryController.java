@@ -14,7 +14,7 @@ import com.brieuc.cashtag.service.EntryService;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -32,14 +32,14 @@ public class EntryController implements EntryApi {
     private final EntrySpecificationMapper entrySpecificationMapper;
 
     @Override
-    public ResponseEntity<PageImpl<EntryDto>> getEntries(
+    public ResponseEntity<PagedModel<EntryDto>> getEntries(
             @ParameterObject EntrySpecificationDto entrySpecificationDto,
             @ParameterObject PageRequestDto pageRequestDto) {
         Specification<Entry> specification = entrySpecificationMapper.toEntity(entrySpecificationDto);
         Page<EntryDto> entries = entryService.getEntries(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(entryMapper::tDto);
 
-        return ResponseEntity.ok(new PageImpl<>(entries.getContent(), entries.getPageable(), entries.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(entries));
     }
 
     @Override

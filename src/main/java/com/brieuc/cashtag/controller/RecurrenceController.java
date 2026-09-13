@@ -15,7 +15,7 @@ import com.brieuc.cashtag.service.RecurrenceService;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -38,7 +38,7 @@ public class RecurrenceController implements RecurrenceApi {
     private final EntryMapper entryMapper;
 
     @Override
-    public ResponseEntity<PageImpl<RecurrenceDto>> getRecurrences(
+    public ResponseEntity<PagedModel<RecurrenceDto>> getRecurrences(
             @ParameterObject RecurrenceSpecificationDto recurrenceSpecificationDto,
             @ParameterObject PageRequestDto pageRequestDto) {
         Specification<Recurrence> specification = recurrenceSpecificationMapper.toEntity(recurrenceSpecificationDto);
@@ -46,7 +46,7 @@ public class RecurrenceController implements RecurrenceApi {
                 .getRecurrences(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(recurrenceMapper::toDto);
         return ResponseEntity.ok(
-                new PageImpl<>(recurrences.getContent(), recurrences.getPageable(), recurrences.getTotalElements()));
+                new PagedModel<>(recurrences));
     }
 
     @Override

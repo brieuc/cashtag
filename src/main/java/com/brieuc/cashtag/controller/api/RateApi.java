@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,7 +22,7 @@ public interface RateApi {
 
     @Operation(summary = "Récupérer tous les taux de change", description = "Retourne une liste paginée de tous les taux de change")
     @GetMapping
-    ResponseEntity<PageImpl<RateDto>> getRates(
+    ResponseEntity<PagedModel<RateDto>> getRates(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
 
     @Operation(summary = "Récupérer un taux par son ID", description = "Retourne un taux de change spécifique")
@@ -41,7 +41,7 @@ public interface RateApi {
                     content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = RateDto.class))))
     })
     @GetMapping("/currency/{currencyCode}")
-    ResponseEntity<PageImpl<RateDto>> getRatesByCurrency(
+    ResponseEntity<PagedModel<RateDto>> getRatesByCurrency(
             @Parameter(description = "Code ISO de la devise", required = true, example = "EUR") @PathVariable String currencyCode,
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
 

@@ -12,7 +12,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -25,7 +25,7 @@ public interface EntryApi {
     @Operation(summary = "Récupérer toutes les entrées",
             description = "Retourne une liste paginée d'entrées filtrées selon les critères de recherche fournis")
     @GetMapping
-    ResponseEntity<PageImpl<EntryDto>> getEntries(
+    ResponseEntity<PagedModel<EntryDto>> getEntries(
             @Parameter(description = "Critères de filtrage des entrées") @ParameterObject EntrySpecificationDto entrySpecificationDto,
             @Parameter(description = "Paramètres de pagination (page, size, sort)") @ParameterObject PageRequestDto pageRequestDto);
 

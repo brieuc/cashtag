@@ -10,7 +10,7 @@ import com.brieuc.cashtag.service.TagServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -29,11 +29,11 @@ public class TagController implements TagApi {
     private final PageRequestMapper pageRequestMapper;
 
     @Override
-    public ResponseEntity<PageImpl<TagDto>> getTags(@ParameterObject PageRequestDto pageRequestDto) {
+    public ResponseEntity<PagedModel<TagDto>> getTags(@ParameterObject PageRequestDto pageRequestDto) {
         Specification<Tag> specification = Specification.unrestricted();
         Page<TagDto> tags = tagService.getTags(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(tagMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(tags.getContent(), tags.getPageable(), tags.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(tags));
     }
 
     @Override
