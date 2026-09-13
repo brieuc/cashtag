@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,7 +21,7 @@ public interface CurrencyApi {
 
     @Operation(summary = "Récupérer toutes les devises", description = "Retourne une liste paginée de toutes les devises")
     @GetMapping
-    ResponseEntity<PageImpl<CurrencyDto>> getCurrencies(
+    ResponseEntity<PagedModel<CurrencyDto>> getCurrencies(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
 
     @Operation(summary = "Récupérer une devise par son code", description = "Retourne une devise spécifique identifiée par son code ISO")

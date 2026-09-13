@@ -10,7 +10,7 @@ import com.brieuc.cashtag.service.PeriodServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -30,11 +30,11 @@ public class PeriodController implements PeriodApi {
     private final PageRequestMapper pageRequestMapper;
 
     @Override
-    public ResponseEntity<PageImpl<PeriodDto>> getPeriods(@ParameterObject PageRequestDto pageRequestDto) {
+    public ResponseEntity<PagedModel<PeriodDto>> getPeriods(@ParameterObject PageRequestDto pageRequestDto) {
         Specification<Period> specification = Specification.unrestricted();
         Page<PeriodDto> periods = periodService.getPeriods(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(periodMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(periods.getContent(), periods.getPageable(), periods.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(periods));
     }
 
     @Override

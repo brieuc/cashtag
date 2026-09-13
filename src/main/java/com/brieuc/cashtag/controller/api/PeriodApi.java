@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,7 +23,7 @@ public interface PeriodApi {
 
     @Operation(summary = "Récupérer toutes les périodes", description = "Retourne une liste paginée de toutes les périodes comptables")
     @GetMapping
-    ResponseEntity<PageImpl<PeriodDto>> getPeriods(
+    ResponseEntity<PagedModel<PeriodDto>> getPeriods(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
 
     @Operation(summary = "Récupérer une période par son ID", description = "Retourne une période spécifique")

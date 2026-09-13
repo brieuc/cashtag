@@ -11,7 +11,7 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +23,7 @@ public interface TagApi {
 
     @Operation(summary = "Récupérer tous les tags", description = "Retourne une liste paginée de tous les tags")
     @GetMapping
-    ResponseEntity<PageImpl<TagDto>> getTags(
+    ResponseEntity<PagedModel<TagDto>> getTags(
             @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
 
     @Operation(summary = "Récupérer un tag par son ID", description = "Retourne un tag spécifique")

@@ -10,7 +10,7 @@ import com.brieuc.cashtag.service.RateService;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +27,11 @@ public class RateController implements RateApi {
     private final RateMapper rateMapper;
 
     @Override
-    public ResponseEntity<PageImpl<RateDto>> getRates(@ParameterObject PageRequestDto pageRequestDto) {
+    public ResponseEntity<PagedModel<RateDto>> getRates(@ParameterObject PageRequestDto pageRequestDto) {
         Specification<Rate> specification = Specification.unrestricted();
         Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(rateMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(rates.getContent(), rates.getPageable(), rates.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(rates));
     }
 
     @Override
@@ -40,12 +40,12 @@ public class RateController implements RateApi {
     }
 
     @Override
-    public ResponseEntity<PageImpl<RateDto>> getRatesByCurrency(@PathVariable String currencyCode, @ParameterObject PageRequestDto pageRequestDto) {
+    public ResponseEntity<PagedModel<RateDto>> getRatesByCurrency(@PathVariable String currencyCode, @ParameterObject PageRequestDto pageRequestDto) {
         // TODO: Implement specification with currency filter
         Specification<Rate> specification = Specification.unrestricted();
         Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(rateMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(rates.getContent(), rates.getPageable(), rates.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(rates));
     }
 
     @Override

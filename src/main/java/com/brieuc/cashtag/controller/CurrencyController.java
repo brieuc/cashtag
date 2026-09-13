@@ -10,7 +10,7 @@ import com.brieuc.cashtag.service.CurrencyServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
+import org.springframework.data.web.PagedModel;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -27,11 +27,11 @@ public class CurrencyController implements CurrencyApi {
     private final PageRequestMapper pageRequestMapper;
 
     @Override
-    public ResponseEntity<PageImpl<CurrencyDto>> getCurrencies(@ParameterObject PageRequestDto pageRequestDto) {
+    public ResponseEntity<PagedModel<CurrencyDto>> getCurrencies(@ParameterObject PageRequestDto pageRequestDto) {
         Specification<Currency> specification = Specification.unrestricted();
         Page<CurrencyDto> currencies = currencyService.getCurrencies(specification, pageRequestMapper.toPageable(pageRequestDto))
                 .map(currencyMapper::toDto);
-        return ResponseEntity.ok(new PageImpl<>(currencies.getContent(), currencies.getPageable(), currencies.getTotalElements()));
+        return ResponseEntity.ok(new PagedModel<>(currencies));
     }
 
     @Override
