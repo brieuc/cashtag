@@ -38,7 +38,7 @@ public class TagGroupServiceImpl implements TagGroupService {
         List<TagGroup> tagGroups = tagGroupRepository.findAll(Sort.by(Sort.Direction.DESC, "usageCount"));
         if (tagGroups.isEmpty())
             return tagGroups;
-        return tagGroups.stream().filter(tg -> tg.getTags().containsAll(tags)).toList();
+        return tagGroups.stream().filter(tg -> tg.getTags().containsAll(tags)).limit(10).toList();
     }
 
     @Override

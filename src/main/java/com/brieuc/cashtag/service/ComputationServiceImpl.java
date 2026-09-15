@@ -1,6 +1,7 @@
 package com.brieuc.cashtag.service;
 
 import java.math.BigDecimal;
+import java.math.MathContext;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -93,7 +94,7 @@ public class ComputationServiceImpl implements ComputationService {
                   Rate rate = rateService.getRateByCurrenciesAndDate(sourceCurrencyCode, targetCurrencyCode, entry.getAccountingDate().toLocalDate()); // 2)
                   rateValue = rate.getRate();
             }
-            return amount.divide(rateValue, 2, RoundingMode.HALF_UP);
+            return amount.multiply(rateValue, MathContext.DECIMAL64);
       }
 
       private Map<String, ComputationCurrencyAmountDto> computeEntriesByCurrency(List<Entry> entries) {
