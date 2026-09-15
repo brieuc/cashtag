@@ -31,6 +31,8 @@
             </column>
         </createTable>
 
+        <sql dbms="mariadb,mysql">ALTER TABLE recurrency CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
+
         <addForeignKeyConstraint baseTableName="recurrency"
                                  baseColumnNames="currency_code"
                                  constraintName="fk_recurrency_currency"
@@ -49,6 +51,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql dbms="mariadb,mysql">ALTER TABLE recurrency_tag CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
 
         <addPrimaryKey tableName="recurrency_tag"
                        columnNames="recurrency_id, tag_id"

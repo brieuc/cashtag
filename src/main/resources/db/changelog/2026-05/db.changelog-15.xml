@@ -17,6 +17,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql dbms="mariadb,mysql">ALTER TABLE tag_group CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
     </changeSet>
 
     <!-- Create TagGroup-Tag junction table (Many-to-Many relationship) -->
@@ -29,6 +31,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql dbms="mariadb,mysql">ALTER TABLE tag_group_tag CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
 
         <addPrimaryKey tableName="tag_group_tag"
                        columnNames="tag_group_id, tag_id"
@@ -68,6 +72,8 @@
                 <constraints nullable="false"/>
             </column>
         </createTable>
+
+        <sql dbms="mariadb,mysql">ALTER TABLE tag_group_title_suggestion CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
 
         <addForeignKeyConstraint baseTableName="tag_group_title_suggestion"
                                  baseColumnNames="tag_group_id"

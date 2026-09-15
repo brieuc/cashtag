@@ -18,6 +18,8 @@
             </column>
         </createTable>
 
+        <sql dbms="mariadb,mysql">ALTER TABLE tag_image CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;</sql>
+
         <addForeignKeyConstraint baseTableName="tag_image"
                             baseColumnNames="tag_id"
                             constraintName="fk_tag_image_tag"
