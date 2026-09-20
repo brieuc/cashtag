@@ -48,13 +48,13 @@ public class ComputationServiceImpl implements ComputationService {
       }
 
       @Override
-      public List<TagAmount> geTagAmounts(List<Entry> entries) {
+      public List<TagAmount> geTagAmounts(List<Entry> entries, String targetCurrencyCode) {
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
             List<TagAmount> tagAmounts = new ArrayList<>();
             for (Tag tag : tags) {
-                  BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> e.getAmount()).reduce(BigDecimal.ZERO, BigDecimal::add);
-                  TagAmount e = new TagAmount(tag, amount);
-                  tagAmounts.add(e);
+                  BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
+                  TagAmount tagAmount = new TagAmount(tag, amount);
+                  tagAmounts.add(tagAmount);
             }
             return tagAmounts;
       }
