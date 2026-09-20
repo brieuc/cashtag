@@ -21,5 +21,5 @@ public interface ComputationService {
       then all the entries are computed.
       */
       ComputationResponseDto computeSum(List<Entry> entries, String targetCurrencyCode, LocalDateTime startDate, LocalDateTime endDate);
-      List<TagAmount> geTagAmounts(List<Entry> entries);
+      List<TagAmount> geTagAmounts(List<Entry> entries, String targetCurrencyCode);
 }
