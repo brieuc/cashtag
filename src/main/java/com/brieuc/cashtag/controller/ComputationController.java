@@ -7,10 +7,12 @@ import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
 import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
 import com.brieuc.cashtag.dto.calculation.TagAmountDto;
 import com.brieuc.cashtag.entity.Entry;
+import com.brieuc.cashtag.mapper.ComputeResultMapper;
 import com.brieuc.cashtag.mapper.TagAmountMapper;
 import com.brieuc.cashtag.service.ComputationService;
 import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.helper.ComputationSpecBuilder;
+import com.brieuc.cashtag.service.helper.ComputeResult;
 import com.brieuc.cashtag.service.helper.TagAmount;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -29,14 +31,15 @@ public class ComputationController implements ComputationApi {
     private final EntryService entryService;
     private final ComputationSpecBuilder computationSpecBuilder;
     private final TagAmountMapper tagAmountMapper;
+    private final ComputeResultMapper computeResultMapper;
 
     @Override
     public ResponseEntity<ComputationResponseDto> compute(@RequestBody ComputationRequestDto computationRequestDto) {
         Specification<Entry> specification = computationSpecBuilder.from(computationRequestDto);
         List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-        return ResponseEntity.ok(computationService.computeSum(
-                entries,
-                computationRequestDto.targetCurrencyCode(),
+        ComputeResult computeResult = computationService.computeSum(entries, computationRequestDto.targetCurrencyCode());
+        return ResponseEntity.ok(computeResultMapper.toDto(
+                computeResult,
                 computationRequestDto.startDate(),
                 computationRequestDto.endDate()));
     }
@@ -44,8 +47,9 @@ public class ComputationController implements ComputationApi {
     @Override
     public ResponseEntity<List<TagAmountDto>> computeTagAmounts(@RequestBody ComputationRequestDto computationRequestDto) {
         Specification<Entry> specification = computationSpecBuilder.from(computationRequestDto);
+        List<Long> tagIds = computationRequestDto.tags().stream().map(t -> t.getId()).toList();
         List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-        List<TagAmount> tagAmounts = computationService.geTagAmounts(entries, computationRequestDto.targetCurrencyCode());
+        List<TagAmount> tagAmounts = computationService.getTagAmounts(entries, tagIds, computationRequestDto.targetCurrencyCode());
         List<TagAmountDto> tagAmountDtos = tagAmounts.stream()
                 .map(tagAmountMapper::toDto)
                 .collect(Collectors.toList());
