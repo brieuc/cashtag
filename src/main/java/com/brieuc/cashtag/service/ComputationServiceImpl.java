@@ -3,7 +3,6 @@ package com.brieuc.cashtag.service;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -14,12 +13,12 @@ import java.util.stream.Collectors;
 import org.springframework.stereotype.Service;
 
 import com.brieuc.cashtag.dto.calculation.ComputationCurrencyAmountDto;
-import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
+import com.brieuc.cashtag.service.helper.ComputeResult;
 import com.brieuc.cashtag.service.helper.TagAmount;
 
 import lombok.RequiredArgsConstructor;
@@ -32,14 +31,12 @@ public class ComputationServiceImpl implements ComputationService {
       private final RateService rateService;
 
       @Override
-      public ComputationResponseDto computeSum(List<Entry> entries, String targetCurrencyCode, LocalDateTime startDate, LocalDateTime endDate) {
-            
+      public ComputeResult computeSum(List<Entry> entries, String targetCurrencyCode) {
+
             long numberOfEntries = entries.size();
             BigDecimal totalAmount = entries.stream().map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
             Map<String, ComputationCurrencyAmountDto> computationByCurrency = computeEntriesByCurrency(entries);
-            return new ComputationResponseDto(
-                  startDate,
-                  endDate,
+            return new ComputeResult(
                   totalAmount,
                   targetCurrencyCode,
                   numberOfEntries,
@@ -48,10 +45,12 @@ public class ComputationServiceImpl implements ComputationService {
       }
 
       @Override
-      public List<TagAmount> geTagAmounts(List<Entry> entries, String targetCurrencyCode) {
+      public List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, String targetCurrencyCode) {
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
             List<TagAmount> tagAmounts = new ArrayList<>();
             for (Tag tag : tags) {
+                  if (tagIds.contains(tag.getId()))
+                        break;
                   BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
                   TagAmount tagAmount = new TagAmount(tag, amount);
                   tagAmounts.add(tagAmount);

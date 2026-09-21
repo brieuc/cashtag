@@ -17,7 +17,6 @@ import org.mockito.Spy;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
-import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.entity.Rate;
@@ -27,6 +26,7 @@ import com.brieuc.cashtag.service.ComputationServiceImpl;
 import com.brieuc.cashtag.service.CurrencyServiceImpl;
 import com.brieuc.cashtag.service.EntryServiceImpl;
 import com.brieuc.cashtag.service.RateServiceImpl;
+import com.brieuc.cashtag.service.helper.ComputeResult;
 
 @ExtendWith(MockitoExtension.class)
 public class ComputationServiceImplTest {
@@ -75,11 +75,10 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
 
-            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
-                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
+            ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
-            assertEquals(1, computationResponseDto.numberOfEntries());
-            assertEquals(1000.1, computationResponseDto.totalAmount().doubleValue());
+            assertEquals(1, computeResult.numberOfEntries());
+            assertEquals(1000.1, computeResult.totalAmount().doubleValue());
       }
 
       @Test
@@ -111,11 +110,10 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
 
-            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
-                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
+            ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
             // Assert
-            assertEquals(computationRequestDto.targetCurrencyCode(), computationResponseDto.targetCurrencyCode());
+            assertEquals(computationRequestDto.targetCurrencyCode(), computeResult.targetCurrencyCode());
       }
 
       @Test
@@ -148,11 +146,10 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "CHF");
-            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
-                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
+            ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
             // Assert
-            assertEquals(1000 / 0.5, computationResponseDto.totalAmount().doubleValue());
+            assertEquals(1000 / 0.5, computeResult.totalAmount().doubleValue());
       }
 
       @Test
@@ -184,8 +181,7 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "USD");
-            assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
-                                                      computationRequestDto.startDate(), computationRequestDto.endDate()));
+            assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode()));
 
       }
 
@@ -219,10 +215,9 @@ public class ComputationServiceImplTest {
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
                         null, null, null, "EUR");
 
-            ComputationResponseDto computationResponseDto = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode(),
-                                                      computationRequestDto.startDate(), computationRequestDto.endDate());
+            ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
             // Assert
-            assertEquals(1000 / (1 / 0.5), computationResponseDto.totalAmount().doubleValue());
+            assertEquals(1000 / (1 / 0.5), computeResult.totalAmount().doubleValue());
       }
 }
