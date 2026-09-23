@@ -73,7 +73,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, null, "CHF");
+                        null, null, null, null, "CHF");
 
             ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
@@ -108,7 +108,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, null, "CHF");
+                        null, null, null, null, "CHF");
 
             ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
@@ -122,9 +122,8 @@ public class ComputationServiceImplTest {
             The entry contains 1000 EUR
             CHF is the system's reference currency
             User requests the total in CHF (the reference currency)
-            System retrieves the EUR to CHF rate: 0.5 (1 EUR = 0.5 CHF)
-            System calculates: 1000 / 0.5 = 2000 CHF
-            Test verifies the result is 2000
+            System retrieves the EUR -> CHF rate: 0.5 CHF for 1 EUR
+            System calculates: 1000 / 2 = 500 CHF
             */
 
             // Arrange
@@ -145,11 +144,11 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, null, "CHF");
+                        null, null, null, null, "CHF");
             ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
             // Assert
-            assertEquals(1000 / 0.5, computeResult.totalAmount().doubleValue());
+            assertEquals(1000 / 2, computeResult.totalAmount().doubleValue());
       }
 
       @Test
@@ -180,7 +179,7 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, null, "USD");
+                        null, null, null, null, "USD");
             assertThrows(EntityNotFoundException.class, () -> computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode()));
 
       }
@@ -191,9 +190,8 @@ public class ComputationServiceImplTest {
             The entry contains 1000 CHF
             CHF is the system's reference currency
             User requests the total in EUR
-            System retrieves the CHF to EUR rate: 0.5
-            System calculates: 1000 / (1 / 0.5) = 500 EUR
-            Test verifies the result is 500
+            System retrieves the EUR to CHF rate: 0.5
+            System calculates: 1000 x 2 = 2000 EUR
             */
 
             // Arrange
@@ -213,11 +211,11 @@ public class ComputationServiceImplTest {
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(
                         LocalDateTime.of(2020, 1, 1, 0, 0),
                         LocalDateTime.of(2020, 12, 31, 23, 59, 59),
-                        null, null, null, "EUR");
+                        null, null, null, null, "EUR");
 
             ComputeResult computeResult = computationService.computeSum(List.of(entry), computationRequestDto.targetCurrencyCode());
 
             // Assert
-            assertEquals(1000 / (1 / 0.5), computeResult.totalAmount().doubleValue());
+            assertEquals(1000 * 2, computeResult.totalAmount().doubleValue());
       }
 }
