@@ -18,6 +18,9 @@ public record ComputationRequestDto(
       @Schema(description = "List of tags to filter entries in the calculation", example = "[{\"id\": 1, \"title\": \"Office\"}]")
       Set<TagDto> tags,
 
+      @Schema(description = "List of tags to exclude from entries in the calculation", example = "[{\"id\": 1, \"title\": \"Office\"}]")
+      Set<TagDto> excludedTags,
+
       @Schema(description = "list of currencies to filter entries in the calculation")
       Set<CurrencyDto> currencies,
 

@@ -26,6 +26,7 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
       @Override
       public Specification<Entry> toEntity(EntrySpecificationDto entrySpecificationDto) {
             return hasDateBetween(entrySpecificationDto.getStartDate(), entrySpecificationDto.getEndDate())
+                        .and(excludeTags(entrySpecificationDto.getExcludedTagIds()))
                         .and(hasAllTags(entrySpecificationDto.getTagIds()))
                         .and(hasCurrencyCodes(entrySpecificationDto.getCurrencyCodes()))
                         .and(hasText(entrySpecificationDto.getSearchText()));
@@ -68,7 +69,25 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
             return (root, query, cb) -> root.get("currency").get("code").in(currencyCodes);
       }
 
-      public static Specification<Entry> hasAllTags(Set<Long> tagIds) {
+      public Specification<Entry> excludeTags(Set<Long> tagIds) {
+            if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
+                  return null;
+            }
+            return (root, query, cb) -> {
+                  // Il suffit qu'un seul tag du set soit présent sur l'entry pour l'exclure
+                  // (contrairement à hasAllTags qui exige l'ensemble des tagIds)
+                  Subquery<Long> subquery = query.subquery(Long.class);
+                  Root<Entry> subRoot = subquery.correlate(root);
+                  Join<Entry, Tag> subTags = subRoot.join("tags");
+
+                  subquery.select(cb.literal(1L))
+                        .where(subTags.get("id").in(tagIds));
+
+                  return cb.not(cb.exists(subquery));
+            };
+      }
+
+      public Specification<Entry> hasAllTags(Set<Long> tagIds) {
             if (Objects.isNull(tagIds) || tagIds.isEmpty()) {
                   return null;
             }
