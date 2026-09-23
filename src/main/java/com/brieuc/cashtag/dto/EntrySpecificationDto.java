@@ -21,6 +21,9 @@ public class EntrySpecificationDto {
       @Schema(description = "List of tag IDs to filter entries", example = "[1, 2, 5]")
       Set<Long> tagIds;
 
+       @Schema(description = "List of tag IDs to exclude from the entries", example = "[1, 2, 5]")
+      Set<Long> excludedTagIds;
+
       @Schema(description = "Minimum transaction amount", example = "100.0")
       Double startAmount;
 
