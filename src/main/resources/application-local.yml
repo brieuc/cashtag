@@ -13,6 +13,10 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
+    properties:
+      hibernate:
+        generate_statistics: true
+        default_batch_fetch_size: 25
     #database-platform: org.hibernate.dialect.MySQL5InnoDBDialect
     hibernate:
       ddl-auto: none
@@ -23,4 +27,6 @@ spring:
     enabled: true
     change-log: classpath:db/changelog/db.changelog-master.xml
 
-    
+logging:
+  level:
+    org.hibernate.stat: debug
