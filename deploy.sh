@@ -16,7 +16,7 @@ cd "$HOME"
 deploy_frontend() {
       local restart="$1" # true|false
 
-      cd cashtag/cashtvue
+      cd cashtag/cashvue
       git pull origin main
       docker build -t cashvue:latest .
       cd ../cashtag
