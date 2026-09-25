@@ -10,9 +10,11 @@ spring:
     driver-class-name: org.mariadb.jdbc.Driver
 
   jpa:
+    properties:
+      hibernate:
+        default_batch_fetch_size: 25
     hibernate:
       ddl-auto: none
-    show-sql: true
 
   liquibase:
     change-log: classpath:db/changelog/db.changelog-master.xml
