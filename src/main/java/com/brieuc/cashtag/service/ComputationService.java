@@ -17,5 +17,5 @@ public interface ComputationService {
       then all the entries are computed.
       */
       ComputeResult computeSum(List<Entry> entries, String targetCurrencyCode);
-      List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, String targetCurrencyCode);
+      List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode);
 }
