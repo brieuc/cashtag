@@ -52,7 +52,9 @@ public class ComputationSpecBuilder {
             if (tags != null && !tags.isEmpty()) {
                   entrySpecificationDto.setTagIds(tags.stream().map(t -> t.getId()).collect(Collectors.toSet()));
             }
-            entrySpecificationDto.setExcludedTagIds(request.excludedTags().stream().map(t -> t.getId()).collect(Collectors.toSet()));
+            if (request.excludedTags() != null && !request.excludedTags().isEmpty()) {
+                  entrySpecificationDto.setExcludedTagIds(request.excludedTags().stream().map(t -> t.getId()).collect(Collectors.toSet()));
+            }
 
             return entrySpecificationMapper.toEntity(entrySpecificationDto);
       }

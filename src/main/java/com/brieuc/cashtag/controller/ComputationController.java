@@ -48,8 +48,9 @@ public class ComputationController implements ComputationApi {
     public ResponseEntity<List<TagAmountDto>> computeTagAmounts(@RequestBody ComputationRequestDto computationRequestDto) {
         Specification<Entry> specification = computationSpecBuilder.from(computationRequestDto);
         List<Long> tagIds = computationRequestDto.tags().stream().map(t -> t.getId()).toList();
+        List<Long> excludedTagIds = computationRequestDto.excludedTags().stream().map(t -> t.getId()).toList();
         List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-        List<TagAmount> tagAmounts = computationService.getTagAmounts(entries, tagIds, computationRequestDto.targetCurrencyCode());
+        List<TagAmount> tagAmounts = computationService.getTagAmounts(entries, tagIds, excludedTagIds, computationRequestDto.targetCurrencyCode());
         List<TagAmountDto> tagAmountDtos = tagAmounts.stream()
                 .map(tagAmountMapper::toDto)
                 .collect(Collectors.toList());

@@ -45,7 +45,7 @@ public class ComputationServiceImpl implements ComputationService {
       }
 
       @Override
-      public List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, String targetCurrencyCode) {
+      public List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode) {
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
             List<TagAmount> tagAmounts = new ArrayList<>();
             for (Tag tag : tags) {
@@ -54,7 +54,10 @@ public class ComputationServiceImpl implements ComputationService {
                   TagAmount tagAmount = new TagAmount(tag, amount);
                   tagAmounts.add(tagAmount);
             }
-            return tagAmounts.stream().filter(ta -> !tagIds.contains(ta.tag().getId())).toList();
+            return tagAmounts.stream()
+                  .filter(ta -> !tagIds.contains(ta.tag().getId()))
+                  .filter(ta -> !excludedTagIds.contains(ta.tag().getId()))
+                  .toList();
       }
       /**
        *
