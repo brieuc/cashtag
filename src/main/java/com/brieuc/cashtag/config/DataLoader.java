@@ -1,18 +1,12 @@
 package com.brieuc.cashtag.config;
 
 import com.brieuc.cashtag.dto.EntrySpecificationDto;
-import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
-import com.brieuc.cashtag.entity.Rate;
-import com.brieuc.cashtag.entity.Tag;
+
 import com.brieuc.cashtag.entity.TagGroup;
 import com.brieuc.cashtag.entity.user.Role;
 import com.brieuc.cashtag.entity.user.User;
 import com.brieuc.cashtag.mapper.EntrySpecificationMapper;
-import com.brieuc.cashtag.repository.CurrencyRepository;
-import com.brieuc.cashtag.repository.EntryRepository;
-import com.brieuc.cashtag.repository.RateRepository;
-import com.brieuc.cashtag.repository.TagRepository;
 import com.brieuc.cashtag.repository.UserRepository;
 import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.TagGroupService;
@@ -40,14 +34,6 @@ import java.util.stream.Collectors;
 @Slf4j
 public class DataLoader implements ApplicationRunner {
 
-        public String getVersion() {
-                return buildProperties.getVersion();
-        }
-
-    private final CurrencyRepository currencyRepository;
-    private final TagRepository tagRepository;
-    private final EntryRepository entryRepository;
-    private final RateRepository rateRepository;
     private final BuildProperties buildProperties;
     private final TagGroupService tagGroupService;
     private final EntryService entryService;
@@ -80,4 +66,9 @@ public class DataLoader implements ApplicationRunner {
                 tagGroupService.resetTagGroupsAndTitleSuggestions(entries);
         }
     }
+
+    public String getVersion() {
+        return buildProperties.getVersion();
+    }
+
 }

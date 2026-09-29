@@ -6,12 +6,12 @@ import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.mapper.CurrencyMapper;
 import com.brieuc.cashtag.mapper.PageRequestMapper;
+import com.brieuc.cashtag.service.CurrencyService;
 import com.brieuc.cashtag.service.CurrencyServiceImpl;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedModel;
-import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -22,16 +22,18 @@ import org.springframework.web.bind.annotation.RestController;
 @RequiredArgsConstructor
 public class CurrencyController implements CurrencyApi {
 
-    private final CurrencyServiceImpl currencyService;
+    private final CurrencyService currencyService;
     private final CurrencyMapper currencyMapper;
-    private final PageRequestMapper pageRequestMapper;
 
     @Override
-    public ResponseEntity<PagedModel<CurrencyDto>> getCurrencies(@ParameterObject PageRequestDto pageRequestDto) {
-        Specification<Currency> specification = Specification.unrestricted();
-        Page<CurrencyDto> currencies = currencyService.getCurrencies(specification, pageRequestMapper.toPageable(pageRequestDto))
-                .map(currencyMapper::toDto);
-        return ResponseEntity.ok(new PagedModel<>(currencies));
+    public ResponseEntity<List<CurrencyDto>> getCurrencies() {
+        List<CurrencyDto> currencies = currencyService.getCurrencies().stream().map(currencyMapper::toDto).toList();
+        return ResponseEntity.ok(currencies);
+    }
+
+    @Override
+    public ResponseEntity<CurrencyDto> getReferenceCurrency() {
+        return ResponseEntity.ok(currencyMapper.toDto(currencyService.getReferenceCurrency()));
     }
 
     @Override

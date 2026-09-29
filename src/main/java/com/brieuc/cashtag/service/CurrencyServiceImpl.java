@@ -6,9 +6,7 @@ import com.brieuc.cashtag.repository.CurrencyRepository;
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
 
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.domain.Specification;
+import java.util.List;
 import org.springframework.stereotype.Service;
 import org.springframework.validation.annotation.Validated;
 
@@ -20,8 +18,9 @@ public class CurrencyServiceImpl implements CurrencyService {
     private final CurrencyRepository currencyRepository;
 
     @Override
-    public Page<Currency> getCurrencies(@NotNull Specification<Currency> specification, @NotNull Pageable pageable) {
-        return currencyRepository.findAll(specification, pageable);
+    public List<Currency> getCurrencies() {
+        // No need for the reference currency, mess up the list
+        return currencyRepository.findAll().stream().filter(currency -> currency.getReference() == false).toList();
     }
 
     @Override

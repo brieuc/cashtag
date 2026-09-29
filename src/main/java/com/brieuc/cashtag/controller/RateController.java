@@ -1,17 +1,15 @@
 package com.brieuc.cashtag.controller;
 
 import com.brieuc.cashtag.controller.api.RateApi;
-import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.RateDto;
 import com.brieuc.cashtag.entity.Rate;
-import com.brieuc.cashtag.mapper.PageRequestMapper;
 import com.brieuc.cashtag.mapper.RateMapper;
+import com.brieuc.cashtag.service.CurrencyService;
 import com.brieuc.cashtag.service.RateService;
 import lombok.RequiredArgsConstructor;
-import org.springdoc.core.annotations.ParameterObject;
-import org.springframework.data.domain.Page;
-import org.springframework.data.web.PagedModel;
-import org.springframework.data.jpa.domain.Specification;
+
+import java.util.List;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -23,16 +21,8 @@ import org.springframework.web.bind.annotation.RestController;
 public class RateController implements RateApi {
 
     private final RateService rateService;
-    private final PageRequestMapper pageRequestMapper;
+    private final CurrencyService currencyService;
     private final RateMapper rateMapper;
-
-    @Override
-    public ResponseEntity<PagedModel<RateDto>> getRates(@ParameterObject PageRequestDto pageRequestDto) {
-        Specification<Rate> specification = Specification.unrestricted();
-        Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
-                .map(rateMapper::toDto);
-        return ResponseEntity.ok(new PagedModel<>(rates));
-    }
 
     @Override
     public ResponseEntity<RateDto> getRateById(@PathVariable Long id) {
@@ -40,12 +30,11 @@ public class RateController implements RateApi {
     }
 
     @Override
-    public ResponseEntity<PagedModel<RateDto>> getRatesByCurrency(@PathVariable String currencyCode, @ParameterObject PageRequestDto pageRequestDto) {
-        // TODO: Implement specification with currency filter
-        Specification<Rate> specification = Specification.unrestricted();
-        Page<RateDto> rates = rateService.getRates(specification, pageRequestMapper.toPageable(pageRequestDto))
-                .map(rateMapper::toDto);
-        return ResponseEntity.ok(new PagedModel<>(rates));
+    public ResponseEntity<List<RateDto>> getRatesByCurrency(@PathVariable String currencyCode) {
+        String referenceCurrencyCode = currencyService.getReferenceCurrency().getCode(); 
+        List<RateDto> rates = rateService.getRatesBySourceCurrencyAndTargetCurrency(currencyCode, referenceCurrencyCode).stream()
+                .map(rateMapper::toDto).toList();
+        return ResponseEntity.ok(rates);
     }
 
     @Override
