@@ -18,9 +18,7 @@ import java.util.Optional;
 
 @Repository
 public interface RateRepository extends JpaRepository<Rate, Long>, JpaSpecificationExecutor<Rate> {
-    Page<Rate> findAll(Specification<Rate> specification, Pageable pageable);
-    List<Rate> findBySourceCurrencyCode(String sourceCurrencyCode);
-    List<Rate> findByTargetCurrencyCode(String targetCurrencyCode);
+    List<Rate> findBySourceCurrencyCodeAndTargetCurrencyCodeOrderByValueDateDesc(String sourceCurrencyCode, String targetCurrencyCode);
     @Query("SELECT r FROM Rate r WHERE r.sourceCurrency.code = :source " +
         "AND r.targetCurrency.code = :target " +
         "AND r.valueDate <= :valueDate " +

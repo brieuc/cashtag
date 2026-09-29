@@ -10,6 +10,9 @@ import io.swagger.v3.oas.annotations.parameters.RequestBody;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
+
+import java.util.List;
+
 import org.springdoc.core.annotations.ParameterObject;
 import org.springframework.data.web.PagedModel;
 import org.springframework.http.ResponseEntity;
@@ -19,10 +22,18 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping(value = "/currencies", produces = "application/json")
 public interface CurrencyApi {
 
-    @Operation(summary = "Récupérer toutes les devises", description = "Retourne une liste paginée de toutes les devises")
+    @Operation(summary = "Récupérer toutes les devises", description = "Retourne une liste de toutes les devises")
     @GetMapping
-    ResponseEntity<PagedModel<CurrencyDto>> getCurrencies(
-            @Parameter(description = "Paramètres de pagination") @ParameterObject PageRequestDto pageRequestDto);
+    ResponseEntity<List<CurrencyDto>> getCurrencies();
+
+    @Operation(summary = "Récupérer la devise de référence", description = "Retourne la devise de référence dans laquelle les taux sont exprimés")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Devise de référence trouvée",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = CurrencyDto.class))),
+            @ApiResponse(responseCode = "404", description = "Aucune devise de référence définie", content = @Content)
+    })
+    @GetMapping("/reference")
+    ResponseEntity<CurrencyDto> getReferenceCurrency();
 
     @Operation(summary = "Récupérer une devise par son code", description = "Retourne une devise spécifique identifiée par son code ISO")
     @ApiResponses(value = {

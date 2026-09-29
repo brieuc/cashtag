@@ -34,13 +34,8 @@ public class RateServiceImpl implements RateService {
     }
 
     @Override
-    public List<Rate> getRatesBySourceCurrency(@NotNull String sourceCurrencyCode) {
-        return rateRepository.findBySourceCurrencyCode(sourceCurrencyCode);
-    }
-
-    @Override
-    public List<Rate> getRatesByTargetCurrency(@NotNull String targetCurrencyCode) {
-        return rateRepository.findByTargetCurrencyCode(targetCurrencyCode);
+    public List<Rate> getRatesBySourceCurrencyAndTargetCurrency(@NotNull String sourceCurrencyCode, @NotNull String targetCurrencyCode) {
+        return rateRepository.findBySourceCurrencyCodeAndTargetCurrencyCodeOrderByValueDateDesc(sourceCurrencyCode, targetCurrencyCode);
     }
 
     @Override
