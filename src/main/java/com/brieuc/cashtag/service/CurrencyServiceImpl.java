@@ -19,8 +19,8 @@ public class CurrencyServiceImpl implements CurrencyService {
 
     @Override
     public List<Currency> getCurrencies() {
-        // No need for the reference currency, mess up the list
-        return currencyRepository.findAll().stream().filter(currency -> currency.getReference() == false).toList();
+        // No need for the reference currency, mess up the list. Except for the entry currency dumbass
+        return currencyRepository.findAll().stream().toList();
     }
 
     @Override
