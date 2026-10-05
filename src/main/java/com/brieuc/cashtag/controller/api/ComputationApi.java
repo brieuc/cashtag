@@ -4,7 +4,7 @@ import java.util.List;
 
 import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
 import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
-import com.brieuc.cashtag.dto.calculation.TagAmountDto;
+import com.brieuc.cashtag.dto.calculation.TagsAmountDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.ArraySchema;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -41,11 +41,11 @@ public interface ComputationApi {
     )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Calcul effectué avec succès",
-                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagAmountDto.class)))),
+                    content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = TagsAmountDto.class)))),
             @ApiResponse(responseCode = "400", description = "Données invalides ou taux de change manquant", content = @Content)
     })
     @RequestBody(description = "Requête de calcul contenant les filtres et la devise cible", required = true,
             content = @Content(mediaType = "application/json", schema = @Schema(implementation = ComputationRequestDto.class)))
     @PostMapping(value = "/tag-amounts", consumes = "application/json")
-    ResponseEntity<List<TagAmountDto>> computeTagAmounts(ComputationRequestDto computationRequestDto);
+    ResponseEntity<List<TagsAmountDto>> computeTagAmounts(ComputationRequestDto computationRequestDto);
 }

@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.service.helper.ComputeResult;
 import com.brieuc.cashtag.service.helper.TagAmount;
+import com.brieuc.cashtag.service.helper.TagsAmount;
 
 @Service
 public interface ComputationService {
@@ -17,5 +18,5 @@ public interface ComputationService {
       then all the entries are computed.
       */
       ComputeResult computeSum(List<Entry> entries, String targetCurrencyCode);
-      List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode);
+      List<TagsAmount> getTagsAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode);
 }

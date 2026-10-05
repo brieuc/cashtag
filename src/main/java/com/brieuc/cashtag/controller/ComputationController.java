@@ -5,7 +5,7 @@ import java.util.List;
 import com.brieuc.cashtag.controller.api.ComputationApi;
 import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
 import com.brieuc.cashtag.dto.calculation.ComputationResponseDto;
-import com.brieuc.cashtag.dto.calculation.TagAmountDto;
+import com.brieuc.cashtag.dto.calculation.TagsAmountDto;
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.mapper.ComputeResultMapper;
 import com.brieuc.cashtag.mapper.TagAmountMapper;
@@ -14,6 +14,8 @@ import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.helper.ComputationSpecBuilder;
 import com.brieuc.cashtag.service.helper.ComputeResult;
 import com.brieuc.cashtag.service.helper.TagAmount;
+import com.brieuc.cashtag.service.helper.TagsAmount;
+
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -45,13 +47,13 @@ public class ComputationController implements ComputationApi {
     }
 
     @Override
-    public ResponseEntity<List<TagAmountDto>> computeTagAmounts(@RequestBody ComputationRequestDto computationRequestDto) {
+    public ResponseEntity<List<TagsAmountDto>> computeTagAmounts(@RequestBody ComputationRequestDto computationRequestDto) {
         Specification<Entry> specification = computationSpecBuilder.from(computationRequestDto);
         List<Long> tagIds = computationRequestDto.tags().stream().map(t -> t.getId()).toList();
         List<Long> excludedTagIds = computationRequestDto.excludedTags().stream().map(t -> t.getId()).toList();
         List<Entry> entries = entryService.getEntries(specification, Pageable.unpaged()).getContent();
-        List<TagAmount> tagAmounts = computationService.getTagAmounts(entries, tagIds, excludedTagIds, computationRequestDto.targetCurrencyCode());
-        List<TagAmountDto> tagAmountDtos = tagAmounts.stream()
+        List<TagsAmount> tagAmounts = computationService.getTagsAmounts(entries, tagIds, excludedTagIds, computationRequestDto.targetCurrencyCode());
+        List<TagsAmountDto> tagAmountDtos = tagAmounts.stream()
                 .map(tagAmountMapper::toDto)
                 .collect(Collectors.toList());
         return ResponseEntity.ok(tagAmountDtos);
