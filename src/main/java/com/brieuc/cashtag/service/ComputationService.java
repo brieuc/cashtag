@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import com.brieuc.cashtag.entity.Entry;
 import com.brieuc.cashtag.service.helper.ComputeResult;
-import com.brieuc.cashtag.service.helper.TagAmount;
 import com.brieuc.cashtag.service.helper.TagsAmount;
 
 @Service
