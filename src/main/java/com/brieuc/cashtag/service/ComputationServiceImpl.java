@@ -20,6 +20,7 @@ import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.service.helper.ComputeResult;
 import com.brieuc.cashtag.service.helper.TagAmount;
+import com.brieuc.cashtag.service.helper.TagsAmount;
 
 import lombok.RequiredArgsConstructor;
 
@@ -45,19 +46,48 @@ public class ComputationServiceImpl implements ComputationService {
       }
 
       @Override
-      public List<TagAmount> getTagAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode) {
+      public List<TagsAmount> getTagsAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode) {
+            /*
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
             List<TagAmount> tagAmounts = new ArrayList<>();
-            for (Tag tag : tags) {
 
-                  BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
-                  TagAmount tagAmount = new TagAmount(tag, amount);
+            // First operation to find the entries for each tag
+            for (Tag tag : tags) {
+                  //BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
+                  TagAmount tagAmount = new TagAmount(tag, entries.stream().filter(e -> e.getTags().contains(tag)).toList(), false);
                   tagAmounts.add(tagAmount);
             }
+            */
+
+            HashMap<Set<Tag>, List<Entry>> map = new HashMap<>();
+            for (Entry entry : entries) {
+                  if (map.containsKey(entry.getTags())) {
+                        map.get(entry.getTags()).add(entry);
+                  }
+                  else {
+                        List<Entry> entriesForTags = new ArrayList<>();
+                        entriesForTags.add(entry);
+                        map.put(entry.getTags(), entriesForTags);
+                  }
+            }
+
+            List<TagsAmount> tagsAmounts = new ArrayList<>();
+            for (Map.Entry<Set<Tag>, List<Entry>> mapEntry : map.entrySet()) {
+                  List<Entry> mapEntries = mapEntry.getValue();
+                  BigDecimal amount = mapEntries.stream().map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
+                  TagsAmount tagsAmount = new TagsAmount(mapEntry.getKey().stream().toList(), amount);
+                  tagsAmounts.add(tagsAmount);
+            }
+
+            return tagsAmounts;
+
+
+            /*
             return tagAmounts.stream()
                   .filter(ta -> !tagIds.contains(ta.tag().getId()))
                   .filter(ta -> !excludedTagIds.contains(ta.tag().getId()))
                   .toList();
+            */
       }
       /**
        *

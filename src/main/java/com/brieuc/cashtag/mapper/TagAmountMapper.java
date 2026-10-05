@@ -2,11 +2,11 @@ package com.brieuc.cashtag.mapper;
 
 import org.springframework.stereotype.Service;
 
-import com.brieuc.cashtag.dto.calculation.TagAmountDto;
-import com.brieuc.cashtag.service.helper.TagAmount;
+import com.brieuc.cashtag.dto.calculation.TagsAmountDto;
+import com.brieuc.cashtag.service.helper.TagsAmount;
 
 @Service
 public interface TagAmountMapper {
 
-      TagAmountDto toDto(TagAmount tagAmount);
+      TagsAmountDto toDto(TagsAmount tagsAmount);
 }

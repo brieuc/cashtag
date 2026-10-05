@@ -1,11 +1,12 @@
 package com.brieuc.cashtag.service.helper;
 
 import java.math.BigDecimal;
+import java.util.List;
 
 import com.brieuc.cashtag.entity.Tag;
 
-public record TagAmount(
-      Tag tag,
+public record TagsAmount(
+      List<Tag> tag,
       BigDecimal amount
 ) {
       
