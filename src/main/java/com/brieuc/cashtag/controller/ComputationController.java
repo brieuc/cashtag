@@ -13,7 +13,6 @@ import com.brieuc.cashtag.service.ComputationService;
 import com.brieuc.cashtag.service.EntryService;
 import com.brieuc.cashtag.service.helper.ComputationSpecBuilder;
 import com.brieuc.cashtag.service.helper.ComputeResult;
-import com.brieuc.cashtag.service.helper.TagAmount;
 import com.brieuc.cashtag.service.helper.TagsAmount;
 
 import lombok.RequiredArgsConstructor;

@@ -19,7 +19,6 @@ import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.service.helper.ComputeResult;
-import com.brieuc.cashtag.service.helper.TagAmount;
 import com.brieuc.cashtag.service.helper.TagsAmount;
 
 import lombok.RequiredArgsConstructor;
