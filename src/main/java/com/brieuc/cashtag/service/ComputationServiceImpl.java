@@ -97,7 +97,11 @@ public class ComputationServiceImpl implements ComputationService {
                   List<Entry> mapEntries = entries.stream().filter(e -> entriesId.contains(e.getId())).toList();
 
                   BigDecimal amount = mapEntries.stream().map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
-                  TagsAmount tagsAmount = new TagsAmount(mapEntry.getValue().stream().toList(), amount);
+                  TagsAmount tagsAmount = new TagsAmount(mapEntry.getValue().stream()
+                                                                                    .filter(t -> !tagIds.contains(t.getId()))
+                                                                                    .filter(t -> !excludedTagIds.contains(t.getId()))
+                                                                                    .toList(),
+                                                             amount);
                   tagsAmounts.add(tagsAmount);
             }
 
