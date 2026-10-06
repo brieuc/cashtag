@@ -112,7 +112,10 @@ public class ComputationServiceImpl implements ComputationService {
             }
  */
 
-            return tagsAmounts;
+            return tagsAmounts.stream()
+                  .filter(ta -> !tagIds.containsAll(ta.tags().stream().map(t -> t.getId()).toList()))
+                  .filter(ta -> !excludedTagIds.containsAll(ta.tags().stream().map(t -> t.getId()).toList()))
+                  .toList();
 
 
             /*

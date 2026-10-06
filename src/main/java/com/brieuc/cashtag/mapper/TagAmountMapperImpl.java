@@ -15,7 +15,7 @@ public class TagAmountMapperImpl implements TagAmountMapper {
       @Override
       public TagsAmountDto toDto(TagsAmount tagsAmount) {
             return new TagsAmountDto(
-                  tagsAmount.tag().stream().map(tagMapper::toDto).toList(),
+                  tagsAmount.tags().stream().map(tagMapper::toDto).toList(),
                   tagsAmount.amount());
       }
 }
