@@ -6,7 +6,7 @@ import java.util.List;
 import com.brieuc.cashtag.entity.Tag;
 
 public record TagsAmount(
-      List<Tag> tag,
+      List<Tag> tags,
       BigDecimal amount
 ) {
       
