@@ -5,6 +5,7 @@ import java.math.MathContext;
 import java.math.RoundingMode;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -46,8 +47,9 @@ public class ComputationServiceImpl implements ComputationService {
 
       @Override
       public List<TagsAmount> getTagsAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode) {
-            /*
+            
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
+            /*
             List<TagAmount> tagAmounts = new ArrayList<>();
 
             // First operation to find the entries for each tag
@@ -58,17 +60,48 @@ public class ComputationServiceImpl implements ComputationService {
             }
             */
 
+
+            HashMap<Set<Long>, Set<Tag>> mapEntriesIdTags = new HashMap<>();
+            // First operation to find the entries for each tag
+            for (Tag tag : tags) {
+                  // Take the entries from the tag, this tag could not be already in the map because we're looping
+                  // from a tags set. Meaning we don't have to check for the key against this tag.
+                  // What we're interesting in, the entries that are the sames between several tags.
+                  Set<Long> entriesId = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> e.getId()).collect(Collectors.toSet());
+                  if (mapEntriesIdTags.containsKey(entriesId)) {
+                        Set<Tag> mapTags = mapEntriesIdTags.get(entriesId);
+                        mapTags.add(tag);
+                  }
+                  else {
+                        mapEntriesIdTags.put(entriesId, new HashSet<>(Set.of(tag)));
+                  }
+            }
+/*
             HashMap<Set<Tag>, List<Entry>> map = new HashMap<>();
             for (Entry entry : entries) {
-                  if (map.containsKey(entry.getTags())) {
+                  Set<Tag> tagsWithout = entry.getTags().stream().filter(tag -> !tagIds.contains(tag)).collect(Collectors.toSet());
+                  if (map.containsKey(tagsWithout)) {
                         map.get(entry.getTags()).add(entry);
                   }
                   else {
                         List<Entry> entriesForTags = new ArrayList<>();
                         entriesForTags.add(entry);
-                        map.put(entry.getTags(), entriesForTags);
+                        map.put(tagsWithout, entriesForTags);
                   }
             }
+
+ */
+            List<TagsAmount> tagsAmounts = new ArrayList<>();
+            for (Map.Entry<Set<Long>, Set<Tag>> mapEntry : mapEntriesIdTags.entrySet()) {
+                  Set<Long> entriesId = mapEntry.getKey();
+                  List<Entry> mapEntries = entries.stream().filter(e -> entriesId.contains(e.getId())).toList();
+
+                  BigDecimal amount = mapEntries.stream().map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
+                  TagsAmount tagsAmount = new TagsAmount(mapEntry.getValue().stream().toList(), amount);
+                  tagsAmounts.add(tagsAmount);
+            }
+
+/*
 
             List<TagsAmount> tagsAmounts = new ArrayList<>();
             for (Map.Entry<Set<Tag>, List<Entry>> mapEntry : map.entrySet()) {
@@ -77,6 +110,7 @@ public class ComputationServiceImpl implements ComputationService {
                   TagsAmount tagsAmount = new TagsAmount(mapEntry.getKey().stream().toList(), amount);
                   tagsAmounts.add(tagsAmount);
             }
+ */
 
             return tagsAmounts;
 
