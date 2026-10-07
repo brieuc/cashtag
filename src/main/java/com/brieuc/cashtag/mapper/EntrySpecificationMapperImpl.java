@@ -37,7 +37,7 @@ public class EntrySpecificationMapperImpl implements EntrySpecificationMapper {
                   return null;
 
             return (root, query, cb) -> {
-                  String pattern = "%" + searchText.toLowerCase() + "%";
+                  String pattern = "%" + searchText.trim().toLowerCase() + "%";
                   return cb.or(
                         cb.like(cb.lower(root.get("title")), pattern),
                         cb.like(cb.lower(root.get("description")), pattern)
