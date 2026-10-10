@@ -19,13 +19,12 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import com.brieuc.cashtag.dto.calculation.ComputationRequestDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
-import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.mapper.EntrySpecificationMapperImpl;
 import com.brieuc.cashtag.service.ComputationServiceImpl;
 import com.brieuc.cashtag.service.CurrencyServiceImpl;
 import com.brieuc.cashtag.service.EntryServiceImpl;
-import com.brieuc.cashtag.service.RateServiceImpl;
+import com.brieuc.cashtag.service.RateCache;
 import com.brieuc.cashtag.service.helper.ComputeResult;
 
 @ExtendWith(MockitoExtension.class)
@@ -41,7 +40,7 @@ public class ComputationServiceImplTest {
       private CurrencyServiceImpl currencyService;
 
       @Mock
-      private RateServiceImpl rateService;
+      private RateCache rateCache;
 
       @Spy
       private EntrySpecificationMapperImpl entrySpecificationMapper;
@@ -136,8 +135,8 @@ public class ComputationServiceImplTest {
             //Page<Entry> page = new PageImpl<>(List.of(entry));
             //when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
-            when(rateService.getRateByCurrenciesAndDate(any(), any(), any()))
-                  .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
+            when(rateCache.getRate(any(), any(), any()))
+                  .thenReturn(BigDecimal.valueOf(0.5));
             
 
             // Act
@@ -204,8 +203,8 @@ public class ComputationServiceImplTest {
             //Page<Entry> page = new PageImpl<>(List.of(entry));
             //when(entryService.getEntries(any(), any())).thenReturn(page);
             when(currencyService.getReferenceCurrency()).thenReturn(new Currency("CHF", true));
-            when(rateService.getRateByCurrenciesAndDate(any(), any(), any()))
-                  .thenReturn(new Rate(null, null, null, null, BigDecimal.valueOf(0.5)));
+            when(rateCache.getRate(any(), any(), any()))
+                  .thenReturn(BigDecimal.valueOf(0.5));
 
             // Act
             ComputationRequestDto computationRequestDto = new ComputationRequestDto(

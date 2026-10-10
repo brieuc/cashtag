@@ -16,7 +16,6 @@ import org.springframework.stereotype.Service;
 import com.brieuc.cashtag.dto.calculation.ComputationCurrencyAmountDto;
 import com.brieuc.cashtag.entity.Currency;
 import com.brieuc.cashtag.entity.Entry;
-import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.entity.Tag;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.service.helper.ComputeResult;
@@ -29,7 +28,7 @@ import lombok.RequiredArgsConstructor;
 public class ComputationServiceImpl implements ComputationService {
 
       private final CurrencyService currencyService;
-      private final RateService rateService;
+      private final RateCache rateCache;
 
       @Override
       public ComputeResult computeSum(List<Entry> entries, String targetCurrencyCode) {
@@ -49,18 +48,7 @@ public class ComputationServiceImpl implements ComputationService {
       public List<TagsAmount> getTagsAmounts(List<Entry> entries, List<Long> tagIds, List<Long> excludedTagIds, String targetCurrencyCode) {
             
             Set<Tag> tags = entries.stream().flatMap(e -> e.getTags().stream()).collect(Collectors.toSet());
-            /*
-            List<TagAmount> tagAmounts = new ArrayList<>();
-
-            // First operation to find the entries for each tag
-            for (Tag tag : tags) {
-                  //BigDecimal amount = entries.stream().filter(e -> e.getTags().contains(tag)).map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
-                  TagAmount tagAmount = new TagAmount(tag, entries.stream().filter(e -> e.getTags().contains(tag)).toList(), false);
-                  tagAmounts.add(tagAmount);
-            }
-            */
-
-
+  
             HashMap<Set<Long>, Set<Tag>> mapEntriesIdTags = new HashMap<>();
             // First operation to find the entries for each tag
             for (Tag tag : tags) {
@@ -76,21 +64,7 @@ public class ComputationServiceImpl implements ComputationService {
                         mapEntriesIdTags.put(entriesId, new HashSet<>(Set.of(tag)));
                   }
             }
-/*
-            HashMap<Set<Tag>, List<Entry>> map = new HashMap<>();
-            for (Entry entry : entries) {
-                  Set<Tag> tagsWithout = entry.getTags().stream().filter(tag -> !tagIds.contains(tag)).collect(Collectors.toSet());
-                  if (map.containsKey(tagsWithout)) {
-                        map.get(entry.getTags()).add(entry);
-                  }
-                  else {
-                        List<Entry> entriesForTags = new ArrayList<>();
-                        entriesForTags.add(entry);
-                        map.put(tagsWithout, entriesForTags);
-                  }
-            }
 
- */
             List<TagsAmount> tagsAmounts = new ArrayList<>();
             for (Map.Entry<Set<Long>, Set<Tag>> mapEntry : mapEntriesIdTags.entrySet()) {
                   Set<Long> entriesId = mapEntry.getKey();
@@ -105,29 +79,10 @@ public class ComputationServiceImpl implements ComputationService {
                   tagsAmounts.add(tagsAmount);
             }
 
-/*
-
-            List<TagsAmount> tagsAmounts = new ArrayList<>();
-            for (Map.Entry<Set<Tag>, List<Entry>> mapEntry : map.entrySet()) {
-                  List<Entry> mapEntries = mapEntry.getValue();
-                  BigDecimal amount = mapEntries.stream().map(e -> getLocalizedAmount(e, targetCurrencyCode)).reduce(BigDecimal.ZERO, BigDecimal::add);
-                  TagsAmount tagsAmount = new TagsAmount(mapEntry.getKey().stream().toList(), amount);
-                  tagsAmounts.add(tagsAmount);
-            }
- */
-
             return tagsAmounts.stream()
                   .filter(ta -> !tagIds.containsAll(ta.tags().stream().map(t -> t.getId()).toList()))
                   .filter(ta -> !excludedTagIds.containsAll(ta.tags().stream().map(t -> t.getId()).toList()))
                   .toList();
-
-
-            /*
-            return tagAmounts.stream()
-                  .filter(ta -> !tagIds.contains(ta.tag().getId()))
-                  .filter(ta -> !excludedTagIds.contains(ta.tag().getId()))
-                  .toList();
-            */
       }
       /**
        *
@@ -158,12 +113,11 @@ public class ComputationServiceImpl implements ComputationService {
                   if (!sourceCurrencyCode.equals(referenceCurrency.getCode()))
                         throw new EntityNotFoundException("the target currency doesn't match the reference currency or the tag currency");
                   
-                  Rate rate = rateService.getRateByCurrenciesAndDate(targetCurrencyCode, sourceCurrencyCode,entry.getAccountingDate().toLocalDate()); // 2)     
-                  rateValue = BigDecimal.valueOf(1.00).divide(rate.getRate(), 2, RoundingMode.HALF_UP);
+                  BigDecimal rate = rateCache.getRate(targetCurrencyCode, sourceCurrencyCode, entry.getAccountingDate().toLocalDate()); // 2)
+                  rateValue = BigDecimal.valueOf(1.00).divide(rate, 2, RoundingMode.HALF_UP);
             }
             else {
-                  Rate rate = rateService.getRateByCurrenciesAndDate(sourceCurrencyCode, targetCurrencyCode, entry.getAccountingDate().toLocalDate()); // 2)
-                  rateValue = rate.getRate();
+                  rateValue = rateCache.getRate(sourceCurrencyCode, targetCurrencyCode, entry.getAccountingDate().toLocalDate()); // 2)
             }
             return amount.multiply(rateValue, MathContext.DECIMAL64);
       }
