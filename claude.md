@@ -1,0 +1,1 @@
+Ne modifie pas les fichiers sans demande explicite.ok 

@@ -3,15 +3,18 @@ package com.brieuc.cashtag.service;
 import java.time.LocalDate;
 import java.util.List;
 
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.validation.annotation.Validated;
 
 import com.brieuc.cashtag.entity.Rate;
 import com.brieuc.cashtag.exception.EntityNotFoundException;
 import com.brieuc.cashtag.repository.RateRepository;
+import com.brieuc.cashtag.service.event.RatesChangedEvent;
 
 import jakarta.validation.constraints.NotNull;
 import lombok.RequiredArgsConstructor;
@@ -22,6 +25,7 @@ import lombok.RequiredArgsConstructor;
 public class RateServiceImpl implements RateService {
 
     private final RateRepository rateRepository;
+    private final ApplicationEventPublisher eventPublisher;
 
     @Override
     public Page<Rate> getRates(@NotNull Specification<Rate> specification, @NotNull Pageable pageable) {
@@ -45,14 +49,18 @@ public class RateServiceImpl implements RateService {
     }
 
     @Override
+    @Transactional
     public Rate save(@NotNull Rate rate) {
         if (rate.getSourceCurrency().getCode().equals("DYN") || rate.getTargetCurrency().getCode().equals("DYN")) {
             throw new RuntimeException("Not possible to add rate for dynamic currency");
         }
-        return rateRepository.save(rate);
+        Rate savedRate = rateRepository.save(rate);
+        eventPublisher.publishEvent(new RatesChangedEvent());
+        return savedRate;
     }
 
     @Override
+    @Transactional
     public Rate update(@NotNull Rate detachedRate) {
         if (detachedRate.getSourceCurrency().getCode().equals("DYN") || detachedRate.getTargetCurrency().getCode().equals("DYN")) {
             throw new RuntimeException("Not possible to add rate for dynamic currency");
@@ -62,12 +70,16 @@ public class RateServiceImpl implements RateService {
         rate.setTargetCurrency(detachedRate.getTargetCurrency());
         rate.setValueDate(detachedRate.getValueDate());
         rate.setRate(detachedRate.getRate());
-        return rateRepository.save(rate);
+        Rate savedRate = rateRepository.save(rate);
+        eventPublisher.publishEvent(new RatesChangedEvent());
+        return savedRate;
     }
 
     @Override
+    @Transactional
     public void delete(@NotNull Rate rate) {
         rateRepository.delete(rate);
+        eventPublisher.publishEvent(new RatesChangedEvent());
     }
 
 
