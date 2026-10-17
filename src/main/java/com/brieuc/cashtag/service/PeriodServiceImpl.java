@@ -50,6 +50,7 @@ public class PeriodServiceImpl implements PeriodService {
         period.setEndDate(detachedPeriod.getEndDate());
         period.setCurrency(detachedPeriod.getCurrency());
         period.setHidden(detachedPeriod.getHidden());
+        period.setDescription(detachedPeriod.getDescription());
         return periodRepository.save(period);
     }
 
