@@ -2,6 +2,7 @@ package com.brieuc.cashtag.controller.api;
 
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.PeriodDto;
+import com.brieuc.cashtag.dto.RenderedDescriptionDto;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -34,6 +35,17 @@ public interface PeriodApi {
     })
     @GetMapping("/{id}")
     ResponseEntity<PeriodDto> getPeriodById(
+            @Parameter(description = "ID de la période", required = true, example = "1") @PathVariable Long id);
+
+    @Operation(summary = "Rendre la description d'une période",
+               description = "Retourne la description avec les expressions {{ }} remplacées par les montants calculés sur la période")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Description rendue",
+                    content = @Content(mediaType = "application/json", schema = @Schema(implementation = RenderedDescriptionDto.class))),
+            @ApiResponse(responseCode = "404", description = "Période non trouvée", content = @Content)
+    })
+    @GetMapping("/{id}/description/rendered")
+    ResponseEntity<RenderedDescriptionDto> getRenderedDescription(
             @Parameter(description = "ID de la période", required = true, example = "1") @PathVariable Long id);
 
     @Operation(summary = "Récupérer une période par date", description = "Retourne la période comptable contenant une date spécifique")

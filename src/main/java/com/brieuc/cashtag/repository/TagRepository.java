@@ -14,5 +14,6 @@ import java.util.Optional;
 @Repository
 public interface TagRepository extends JpaRepository<Tag, Long>, JpaSpecificationExecutor<Tag>  {
     Optional<Tag> findByTitle(String title);
+    Optional<Tag> findByCode(String code);
     Page<Tag> findAll(Specification<Tag> specfication, Pageable pageable);
 }
