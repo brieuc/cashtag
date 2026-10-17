@@ -21,6 +21,9 @@ public class PeriodDto {
     @Schema(description = "Title or name of the period", example = "First quarter 2024", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 255)
     private String title;
 
+    @Schema(description = "Description of the period", example = "Expenses for the first quarter", nullable = true)
+    private String description;
+
     @Schema(description = "Start date and time of the period", example = "2024-01-01T00:00:00", requiredMode = Schema.RequiredMode.REQUIRED)
     private LocalDateTime startDate;
 

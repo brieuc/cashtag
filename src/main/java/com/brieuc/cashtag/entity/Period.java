@@ -23,6 +23,9 @@ public class Period {
     @Column(nullable = false)
     private String title;
 
+    @Column(columnDefinition = "TEXT")
+    private String description;
+
     @Column(name = "start_date", nullable = false)
     private LocalDateTime startDate;
 
