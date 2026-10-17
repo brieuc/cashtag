@@ -21,6 +21,9 @@ public class Tag {
     @Column(nullable = false)
     private String title;
 
+    @Column(length = 255)
+    private String code;
+
     @Column(columnDefinition = "TEXT")
     private String description;
     

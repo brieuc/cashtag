@@ -19,6 +19,9 @@ public class TagDto {
     @Schema(description = "Name/title of the tag", example = "Office", requiredMode = Schema.RequiredMode.REQUIRED, maxLength = 100)
     private String title;
 
+    @Schema(description = "Unique code of the tag", example = "office", maxLength = 255)
+    private String code;
+
     @Schema(description = "Detailed description of the tag", example = "Office-related expenses and supplies", maxLength = 500)
     private String description;
 

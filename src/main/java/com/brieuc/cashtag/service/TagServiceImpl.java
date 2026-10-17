@@ -70,6 +70,7 @@ public class TagServiceImpl implements TagService {
     public Tag update(@NotNull Tag detachedTag) {
         Tag tag = getById(detachedTag.getId());
         tag.setTitle(detachedTag.getTitle());
+        tag.setCode(detachedTag.getCode());
         tag.setDescription(detachedTag.getDescription());
         //tag.setIcon(detachedTag.getIcon());
         tag.setSortingOrder(detachedTag.getSortingOrder());

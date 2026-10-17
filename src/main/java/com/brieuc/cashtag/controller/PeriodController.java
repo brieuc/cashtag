@@ -3,9 +3,11 @@ package com.brieuc.cashtag.controller;
 import com.brieuc.cashtag.controller.api.PeriodApi;
 import com.brieuc.cashtag.dto.PageRequestDto;
 import com.brieuc.cashtag.dto.PeriodDto;
+import com.brieuc.cashtag.dto.RenderedDescriptionDto;
 import com.brieuc.cashtag.entity.Period;
 import com.brieuc.cashtag.mapper.PageRequestMapper;
 import com.brieuc.cashtag.mapper.PeriodMapper;
+import com.brieuc.cashtag.service.PeriodDescriptionRenderer;
 import com.brieuc.cashtag.service.PeriodServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springdoc.core.annotations.ParameterObject;
@@ -28,6 +30,7 @@ public class PeriodController implements PeriodApi {
     private final PeriodServiceImpl periodService;
     private final PeriodMapper periodMapper;
     private final PageRequestMapper pageRequestMapper;
+    private final PeriodDescriptionRenderer periodDescriptionRenderer;
 
     @Override
     public ResponseEntity<PagedModel<PeriodDto>> getPeriods(@ParameterObject PageRequestDto pageRequestDto) {
@@ -40,6 +43,12 @@ public class PeriodController implements PeriodApi {
     @Override
     public ResponseEntity<PeriodDto> getPeriodById(@PathVariable Long id) {
         return ResponseEntity.ok(periodMapper.toDto(periodService.getById(id)));
+    }
+
+    @Override
+    public ResponseEntity<RenderedDescriptionDto> getRenderedDescription(@PathVariable Long id) {
+        Period period = periodService.getById(id);
+        return ResponseEntity.ok(new RenderedDescriptionDto(periodDescriptionRenderer.render(period)));
     }
 
     @Override
